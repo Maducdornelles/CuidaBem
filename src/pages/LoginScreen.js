@@ -6,15 +6,15 @@ import styles from '../style/stylelogin';
 import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
-  const navigation = useNavigation(); // Hook para navegação
+  const navigation = useNavigation(); 
   const [isRememberMe, setIsRememberMe] = useState(false);
 
   const toggleRememberMe = () => setIsRememberMe((prev) => !prev);
 
   const handleLogin = () => {
     console.log('Acessando a conta...');
-    // Redirecionar para a tela de cadastro ou outra tela desejada
-    navigation.navigate('SignUp'); // Mude para a tela que desejar
+   
+    navigation.navigate('SignUp'); // Mude para a tela home
   };
 
   const handleCreateAccount = () => {
@@ -23,8 +23,8 @@ const LoginScreen = () => {
 
   const handleGuestAccess = () => {
     console.log('Entrar sem cadastro...');
-    // Redirecionar para outra tela desejada
-    navigation.navigate('SignUp'); // Mude para a tela que desejar
+  
+    navigation.navigate('SignUp'); // Mude para a tela home 
   };
 
   return (
@@ -48,7 +48,7 @@ const LoginScreen = () => {
       <ButtonComponent 
         title="Acessar" 
         buttonStyle={styles.loginButton}
-        onPress={handleLogin} // Ação do botão "Acessar"
+        onPress={handleLogin} 
       />
 
       <View style={styles.footer}>

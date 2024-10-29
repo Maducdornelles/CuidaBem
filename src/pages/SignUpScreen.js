@@ -30,13 +30,14 @@ const SignUpScreen = ({ navigation }) => {
       <InputComponent placeholder="Senha" secureTextEntry={true} />
       <InputComponent placeholder="Confirme a senha" secureTextEntry={true} />
       
-      <View style={styles.checkboxContainer}>
+      {/* Removido checkboxContainer e utilizando switch diretamente */}
+      <View style={styles.switchContainer}>
         <Switch 
           value={isChecked} 
           onValueChange={toggleSwitch} 
-          style={styles.checkbox} 
+          style={styles.switch} // Altere aqui se precisar de estilos específicos
         />
-        <Text style={styles.label}>Eu aceito os termos de uso</Text>
+        <Text style={styles.switchLabelText}>Eu aceito os termos de uso</Text>
       </View>
       
       <ButtonComponent 
@@ -54,4 +55,4 @@ const SignUpScreen = ({ navigation }) => {
   );
 };
 
-export default SignUpScreen; 
+export default SignUpScreen;

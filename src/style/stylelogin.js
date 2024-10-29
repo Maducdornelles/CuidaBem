@@ -1,17 +1,17 @@
 import { StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
+const loginstyle = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 20, // Unificado
   },
   icon: {
     width: 150,
     height: 150,
-    marginBottom: 40, 
+    marginBottom: 40,
     resizeMode: 'contain',
   },
   input: {
@@ -20,9 +20,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderRadius: 10,
     paddingHorizontal: 15,
-    marginVertical: 10,
+    marginVertical: 10, // Unificado
     fontSize: 16,
-    fontFamily: 'System', 
+    fontFamily: 'System',
   },
   switchContainer: {
     flexDirection: 'row',
@@ -32,19 +32,21 @@ const styles = StyleSheet.create({
   switchLabelText: {
     color: '#000',
     fontSize: 14,
-    fontFamily: 'System', 
+    fontFamily: 'System',
   },
   loginButton: {
-    backgroundColor: '#62A4B0',
     width: 286,
     height: 45,
+    backgroundColor: '#62A4B0',
     borderRadius: 10,
     marginVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loginButtonText: {
     color: '#FFF',
     fontSize: 18,
-    fontFamily: 'System', 
+    fontFamily: 'System',
     textAlign: 'center',
   },
   footer: {
@@ -68,9 +70,9 @@ const styles = StyleSheet.create({
   footerButtonText: {
     color: '#62A4B0',
     fontSize: 14,
-    fontFamily: 'System', 
+    fontFamily: 'System',
     textAlign: 'center',
   },
 });
 
-export default styles;
+export default loginstyle;

@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    padding: 20,
+    paddingHorizontal: 20, 
   },
   icon: {
     width: 150,
@@ -20,59 +20,51 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F3F3',
     borderRadius: 25,
     paddingHorizontal: 20,
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    fontFamily: 'System', 
+    marginVertical: 7, 
+    fontFamily: 'System',
     color: '#000',
-    marginVertical: 7,
   },
-  checkboxContainer: {
+  switchContainer: { 
     flexDirection: 'row',
-    marginBottom: 20,
     alignItems: 'center',
-    marginVertical: 5,
+    marginVertical: 10, 
   },
-  checkbox: {
+  switch: { // Estilo para o switch, se necessário
     marginRight: 10,
   },
-  label: {
+  switchLabelText: { // Estilo para o texto do switch
     color: '#000',
-    fontFamily: 'System', 
-    fontSize: 14, 
-  },
-  defaultButton: { 
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-    marginVertical: 5,
+    fontFamily: 'System',
+    fontSize: 14,
   },
   createButton: {
     width: 286,
     height: 45,
     backgroundColor: '#62A4B0',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 10,
+  },
+  createButtonText: {
+    color: '#FFF',
+    fontFamily: 'System',
+    fontSize: 16,
   },
   loginButton: {
     width: 286,
     height: 45,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#62A4B0',
     backgroundColor: 'transparent',
-  },
-  buttonText: { 
-    color: '#fff',
-    fontFamily: 'System', 
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loginButtonText: {
     color: '#62A4B0',
-    fontFamily: 'System', 
+    fontFamily: 'System',
+    fontSize: 16,
   },
 });
 
