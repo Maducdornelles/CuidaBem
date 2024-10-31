@@ -1,3 +1,4 @@
+// loginstyle.js
 import { StyleSheet } from 'react-native';
 
 const loginstyle = StyleSheet.create({
@@ -6,23 +7,13 @@ const loginstyle = StyleSheet.create({
     backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20, // Unificado
+    paddingHorizontal: 20,
   },
   icon: {
     width: 150,
     height: 150,
     marginBottom: 40,
     resizeMode: 'contain',
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    marginVertical: 10, // Unificado
-    fontSize: 16,
-    fontFamily: 'System',
   },
   switchContainer: {
     flexDirection: 'row',
@@ -34,44 +25,17 @@ const loginstyle = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'System',
   },
-  loginButton: {
-    width: 286,
-    height: 45,
-    backgroundColor: '#62A4B0',
-    borderRadius: 10,
-    marginVertical: 10,
-    justifyContent: 'center',
+  footer: {
+    marginTop: 10, // Aumenta o espaço entre o PrimaryButton e os SecondaryButtons
+    width: '100%',
     alignItems: 'center',
   },
-  loginButtonText: {
-    color: '#FFF',
-    fontSize: 18,
-    fontFamily: 'System',
-    textAlign: 'center',
-  },
-  footer: {
+  secondaryButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginTop: 15,
-    paddingHorizontal: 20,
-  },
-  footerButton: {
-    width: 132,
-    height: 45,
-    borderRadius: 10,
-    borderColor: '#62A4B0',
-    borderWidth: 1,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 7.5,
-  },
-  footerButtonText: {
-    color: '#62A4B0',
-    fontSize: 14,
-    fontFamily: 'System',
-    textAlign: 'center',
+    paddingHorizontal: 30, // Ajuste de padding para os SecondaryButtons ficarem nas bordas
+    paddingVertical: 5,   // Espaço vertical entre os SecondaryButtons e o PrimaryButton
   },
 });
 

@@ -1,16 +1,38 @@
 import React, { useState } from 'react';
-import { View, Image, Switch, Text } from 'react-native';
+import { View, Image, Switch, Text, Alert } from 'react-native';
 import InputComponent from '../components/InputComponent';
-import ButtonComponent from '../components/ButtonComponent'; 
-import styles from '../style/stylesingup'; 
+import PrimaryButton from '../components/PrimaryButton';
+import TransparentButton from '../components/TransparentButton';
+import styles from '../style/stylesignup';
 
 const SignUpScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
+  const [username, setUsername] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const toggleSwitch = () => setChecked(previousState => !previousState);
 
   const handleCreateAccount = () => {
+    if (!username || !phone || !email || !password || !confirmPassword) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos.");
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      Alert.alert("Erro", "As senhas não coincidem.");
+      return;
+    }
+
+    if (!isChecked) {
+      Alert.alert("Erro", "Você precisa aceitar os termos de uso.");
+      return;
+    }
+
     console.log('Criar conta pressionado');
+    navigation.navigate('Login');
   };
 
   const navigateToLogin = () => {
@@ -24,33 +46,58 @@ const SignUpScreen = ({ navigation }) => {
         style={styles.icon} 
       />
       
-      <InputComponent placeholder="Nome de Usuário" />
-      <InputComponent placeholder="Telefone" keyboardType="phone-pad" />
-      <InputComponent placeholder="E-mail" keyboardType="email-address" />
-      <InputComponent placeholder="Senha" secureTextEntry={true} />
-      <InputComponent placeholder="Confirme a senha" secureTextEntry={true} />
+      <InputComponent 
+        placeholder="Nome de Usuário" 
+        value={username} 
+        onChangeText={setUsername}
+      />
+      <InputComponent 
+        placeholder="Telefone" 
+        keyboardType="phone-pad" 
+        value={phone} 
+        onChangeText={setPhone}
+      />
+      <InputComponent 
+        placeholder="E-mail" 
+        keyboardType="email-address" 
+        value={email} 
+        onChangeText={setEmail}
+      />
+      <InputComponent 
+        placeholder="Senha" 
+        secureTextEntry={true} 
+        value={password} 
+        onChangeText={setPassword}
+      />
+      <InputComponent 
+        placeholder="Confirme a senha" 
+        secureTextEntry={true} 
+        value={confirmPassword} 
+        onChangeText={setConfirmPassword}
+      />
       
-      {/* Removido checkboxContainer e utilizando switch diretamente */}
       <View style={styles.switchContainer}>
         <Switch 
           value={isChecked} 
           onValueChange={toggleSwitch} 
-          style={styles.switch} // Altere aqui se precisar de estilos específicos
+          style={styles.switch} 
         />
         <Text style={styles.switchLabelText}>Eu aceito os termos de uso</Text>
       </View>
       
-      <ButtonComponent 
-        title="Confirmar" 
-        buttonStyle={styles.createButton} 
-        onPress={handleCreateAccount} 
-      />
-      <ButtonComponent 
-        title="Já tenho uma conta" 
-        buttonStyle={styles.loginButton} 
-        textStyle={styles.loginButtonText} 
-        onPress={navigateToLogin} 
-      />
+      <View style={styles.primaryButtonContainer}>
+        <PrimaryButton 
+          title="Confirmar" 
+          onPress={handleCreateAccount}
+        />
+      </View>
+      
+      <View style={styles.transparentButtonContainer}>
+        <TransparentButton 
+          title="Já tenho uma conta" 
+          onPress={navigateToLogin}
+        />
+      </View>
     </View>
   );
 };

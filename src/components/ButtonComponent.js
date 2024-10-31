@@ -3,7 +3,6 @@ import { TouchableOpacity, Text } from 'react-native';
 import styles from '../style/stylesingup';
 
 const ButtonComponent = ({ onPress, title, buttonStyle, textStyle }) => {
-  // Verifica se o botão é verde e define o texto branco automaticamente
   const isGreenButton = buttonStyle && buttonStyle.backgroundColor === '#62A4B0';
   
   return (

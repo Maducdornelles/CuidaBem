@@ -1,66 +1,83 @@
 import React, { useState } from 'react';
-import { View, Image, Text, Switch } from 'react-native';
+import { View, Image, Text, Switch, Alert } from 'react-native';
 import InputComponent from '../components/InputComponent';
-import ButtonComponent from '../components/ButtonComponent';
-import styles from '../style/stylelogin';
+import PrimaryButton from '../components/PrimaryButton';
+import SecondaryButton from '../components/SecondaryButton';
+import loginstyle from '../style/stylelogin';
 import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
   const [isRememberMe, setIsRememberMe] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   const toggleRememberMe = () => setIsRememberMe((prev) => !prev);
 
   const handleLogin = () => {
+    if (!username || !password) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos.");
+      return;
+    }
     console.log('Acessando a conta...');
-   
-    navigation.navigate('SignUp'); // Mude para a tela home
+    navigation.navigate('Home');
   };
 
   const handleCreateAccount = () => {
-    navigation.navigate('SignUp'); // Navega para a tela de cadastro
+    navigation.navigate('SignUp');
   };
 
   const handleGuestAccess = () => {
     console.log('Entrar sem cadastro...');
-  
-    navigation.navigate('SignUp'); // Mude para a tela home 
+    navigation.navigate('Home');
   };
 
   return (
-    <View style={styles.container}>
+    <View style={loginstyle.container}>
       <Image 
         source={require('../../assets/icons/icon.png')} 
-        style={styles.icon} 
+        style={loginstyle.icon} 
       />
 
-      <InputComponent placeholder="Usuário/ E-mail/ Telefone" />
-      <InputComponent placeholder="Senha" secureTextEntry={true} />
+      <InputComponent 
+        placeholder="Usuário, E-mail ou Telefone" 
+        value={username} 
+        onChangeText={setUsername} 
+      />
+      <InputComponent 
+        placeholder="Senha" 
+        secureTextEntry={true} 
+        value={password} 
+        onChangeText={setPassword} 
+      />
 
-      <View style={styles.switchContainer}>
+      <View style={loginstyle.switchContainer}>
         <Switch 
           value={isRememberMe}
           onValueChange={toggleRememberMe}
+          style={{ marginRight: 10 }} 
         />
-        <Text style={styles.switchLabelText}>Manter-me conectado</Text>
+        <Text style={loginstyle.switchLabelText}>Manter-me conectado</Text>
       </View>
 
-      <ButtonComponent 
+      <PrimaryButton 
         title="Acessar" 
-        buttonStyle={styles.loginButton}
         onPress={handleLogin} 
+        textStyle={loginstyle.primaryButtonText} 
       />
 
-      <View style={styles.footer}>
-        <View style={styles.footerButton}>
-          <Text style={styles.footerButtonText} onPress={handleCreateAccount}>
-            Criar conta
-          </Text>
-        </View>
-        <View style={styles.footerButton}>
-          <Text style={styles.footerButtonText} onPress={handleGuestAccess}>
-            Entrar sem cadastro
-          </Text>
+      <View style={loginstyle.footer}>
+        <View style={loginstyle.secondaryButtonsContainer}>
+          <SecondaryButton 
+            title="Criar conta" 
+            onPress={handleCreateAccount} 
+            textStyle={loginstyle.secondaryButtonText} 
+          />
+          <SecondaryButton 
+            title="Entrar sem cadastro" 
+            onPress={handleGuestAccess} 
+            textStyle={loginstyle.secondaryButtonText} 
+          />
         </View>
       </View>
     </View>

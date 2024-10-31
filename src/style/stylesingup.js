@@ -24,10 +24,10 @@ const styles = StyleSheet.create({
     fontFamily: 'System',
     color: '#000',
   },
-  switchContainer: { 
+  switchContainer: { // Estilo para o container do switch
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 10, 
+    marginVertical: 10, // Ajuste o espaçamento como necessário
   },
   switch: { // Estilo para o switch, se necessário
     marginRight: 10,
