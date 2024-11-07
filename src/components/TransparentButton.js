@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
 const TransparentButton = ({ title, onPress }) => {
+  const [isPressed, setIsPressed] = useState(false); 
+
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.button, isPressed && styles.pressedButton]} 
+      onPressIn={() => setIsPressed(true)} 
+      onPressOut={() => setIsPressed(false)} 
+      onPress={onPress}
+    >
       <Text style={styles.buttonText}>{title}</Text>
     </TouchableOpacity>
   );
@@ -19,6 +26,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
+  },
+  pressedButton: {
+    backgroundColor: '#62A4B0', 
   },
   buttonText: {
     color: '#62A4B0',

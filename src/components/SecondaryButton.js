@@ -1,12 +1,24 @@
 // SecondaryButton.js
-import React from 'react';
+import React, { useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-const SecondaryButton = ({ title, onPress }) => (
-  <TouchableOpacity style={styles.secondaryButton} onPress={onPress}>
-    <Text style={styles.secondaryButtonText}>{title}</Text>
-  </TouchableOpacity>
-);
+const SecondaryButton = ({ title, onPress }) => {
+  const [isPressed, setIsPressed] = useState(false); 
+
+  return (
+    <TouchableOpacity
+      style={[
+        styles.secondaryButton,
+        isPressed && styles.pressedButton, 
+      ]}
+      onPressIn={() => setIsPressed(true)} 
+      onPressOut={() => setIsPressed(false)} 
+      onPress={onPress}
+    >
+      <Text style={styles.secondaryButtonText}>{title}</Text>
+    </TouchableOpacity>
+  );
+};
 
 const styles = StyleSheet.create({
   secondaryButton: {
@@ -18,6 +30,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
+  },
+  pressedButton: {
+    backgroundColor: '#62A4B0', 
   },
   secondaryButtonText: {
     fontSize: 14,

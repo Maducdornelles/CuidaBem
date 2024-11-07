@@ -46,34 +46,45 @@ const SignUpScreen = ({ navigation }) => {
         style={styles.icon} 
       />
       
+      {/* Inputs com 15px de distância entre eles */}
       <InputComponent 
         placeholder="Nome de Usuário" 
         value={username} 
         onChangeText={setUsername}
+        style={{ marginBottom: 15 }}
+        width={312} 
       />
       <InputComponent 
         placeholder="Telefone" 
         keyboardType="phone-pad" 
         value={phone} 
         onChangeText={setPhone}
+        style={{ marginBottom: 15 }}
+        width={312} 
       />
       <InputComponent 
         placeholder="E-mail" 
         keyboardType="email-address" 
         value={email} 
         onChangeText={setEmail}
+        style={{ marginBottom: 15 }}
+        width={312} 
       />
       <InputComponent 
         placeholder="Senha" 
         secureTextEntry={true} 
         value={password} 
         onChangeText={setPassword}
+        style={{ marginBottom: 15 }}
+        width={312} 
       />
       <InputComponent 
         placeholder="Confirme a senha" 
         secureTextEntry={true} 
         value={confirmPassword} 
         onChangeText={setConfirmPassword}
+        style={{ marginBottom: 15 }}
+        width={312} 
       />
       
       <View style={styles.switchContainer}>

@@ -1,4 +1,3 @@
-// loginstyle.js
 import { StyleSheet } from 'react-native';
 
 const loginstyle = StyleSheet.create({
@@ -26,7 +25,7 @@ const loginstyle = StyleSheet.create({
     fontFamily: 'System',
   },
   footer: {
-    marginTop: 10, // Aumenta o espaço entre o PrimaryButton e os SecondaryButtons
+    marginTop: 10, 
     width: '100%',
     alignItems: 'center',
   },
@@ -34,8 +33,8 @@ const loginstyle = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    paddingHorizontal: 30, // Ajuste de padding para os SecondaryButtons ficarem nas bordas
-    paddingVertical: 5,   // Espaço vertical entre os SecondaryButtons e o PrimaryButton
+    paddingHorizontal: 30, 
+    paddingVertical: 5,   
   },
 });
 
