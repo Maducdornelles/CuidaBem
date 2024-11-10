@@ -1,10 +1,42 @@
-import React from 'react';
-import { View, Text, ScrollView, Image } from 'react-native';
-import Card from '../components/Card';
-import stylehome from '../style/stylehome';
-import FooterNavigation from '../components/FooterNavigation';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import stylehome from '../style/stylehome'; // Importação do estilo
+import Card from '../components/Card'; // Componente Card
+import FooterNavigation from '../components/FooterNavigation'; // Footer Navigation
+import ModalComponent from '../components/ModalComponent'; // Componente Modal
 
 const HomeScreen = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedMedication, setSelectedMedication] = useState(null);
+
+  // Dados originais dos remédios
+  const medications = [
+    {
+      id: '1',
+      name: 'Quetiapina',
+      description: '• 25mg\n• Antipsicótico atípico\n• Iniciado à 2m e 10d.',
+      details: '• Restam 7 cápsulas.\n• Comprar novamente em 6 dias.',
+    },
+    {
+      id: '2',
+      name: 'Paracetamol',
+      description: '• 500mg\n• Analgésico\n• Iniciado à 1m e 15d.',
+      details: '• Restam 5 comprimidos.\n• Comprar novamente em 3 dias.',
+    },
+    {
+      id: '3',
+      name: 'Ibuprofeno',
+      description: '• 200mg\n• Anti-inflamatório\n• Iniciado à 3m e 7d.',
+      details: '• Restam 10 comprimidos.\n• Comprar novamente em 8 dias.',
+    },
+    {
+      id: '4',
+      name: 'Amoxicilina',
+      description: '• 500mg\n• Antibiótico\n• Iniciado à 1m e 20d.',
+      details: '• Restam 12 cápsulas.\n• Comprar novamente em 5 dias.',
+    },
+  ];
+
   return (
     <View style={stylehome.container}>
       <View style={{ height: 30 }} />
@@ -13,92 +45,37 @@ const HomeScreen = () => {
       </View>
 
       <ScrollView contentContainerStyle={stylehome.scrollContent}>
-        
-        <View style={stylehome.cardSpacing}>
-          <Card>
+        {medications.map((medication) => (
+          <Card key={medication.id} onPress={() => {
+            setSelectedMedication(medication);
+            setModalVisible(true);
+          }}>
             <View style={stylehome.cardContent}>
-              <Image source={require('../../assets/icons/capsula.png')} style={stylehome.cardImage} />
+              <Image
+                source={require('../../assets/icons/capsula.png')}
+                style={stylehome.cardImage}
+              />
               <View style={stylehome.cardTextContainer}>
-                <Text style={stylehome.cardTitle}>Quetiapina</Text>
-                <Text style={stylehome.cardDescription}>• 25mg</Text>
-                <Text style={stylehome.cardDescription}>• Antipsicótico atípico</Text>
-                <Text style={stylehome.cardDescription}>• Iniciado à 2m e 10d.</Text>
+                <Text style={stylehome.cardTitle}>{medication.name}</Text>
+                <Text style={stylehome.cardDescription}>
+                  {medication.description}
+                </Text>
               </View>
             </View>
-            <Text style={stylehome.cardDetails}>
-              • Restam <Text style={stylehome.highlight}>7 cápsulas</Text>.
-            </Text>
-            <Text style={stylehome.cardDetails}>
-              Comprar novamente em <Text style={stylehome.highlight}>6 dias</Text>.
-            </Text>
+            <Text style={stylehome.cardDetails}>{medication.details}</Text>
           </Card>
-        </View>
-
-     
-        <View style={stylehome.cardSpacing}>
-          <Card>
-            <View style={stylehome.cardContent}>
-              <Image source={require('../../assets/icons/capsula.png')} style={stylehome.cardImage} />
-              <View style={stylehome.cardTextContainer}>
-                <Text style={stylehome.cardTitle}>Paracetamol</Text>
-                <Text style={stylehome.cardDescription}>• 500mg</Text>
-                <Text style={stylehome.cardDescription}>• Analgésico</Text>
-                <Text style={stylehome.cardDescription}>• Iniciado à 1m e 15d.</Text>
-              </View>
-            </View>
-            <Text style={stylehome.cardDetails}>
-              • Restam <Text style={stylehome.highlight}>5 comprimidos</Text>.
-            </Text>
-            <Text style={stylehome.cardDetails}>
-              Comprar novamente em <Text style={stylehome.highlight}>3 dias</Text>.
-            </Text>
-          </Card>
-        </View>
-
-      
-        <View style={stylehome.cardSpacing}>
-          <Card>
-            <View style={stylehome.cardContent}>
-              <Image source={require('../../assets/icons/capsula.png')} style={stylehome.cardImage} />
-              <View style={stylehome.cardTextContainer}>
-                <Text style={stylehome.cardTitle}>Ibuprofeno</Text>
-                <Text style={stylehome.cardDescription}>• 200mg</Text>
-                <Text style={stylehome.cardDescription}>• Anti-inflamatório</Text>
-                <Text style={stylehome.cardDescription}>• Iniciado à 3m e 7d.</Text>
-              </View>
-            </View>
-            <Text style={stylehome.cardDetails}>
-              • Restam <Text style={stylehome.highlight}>10 comprimidos</Text>.
-            </Text>
-            <Text style={stylehome.cardDetails}>
-              Comprar novamente em <Text style={stylehome.highlight}>8 dias</Text>.
-            </Text>
-          </Card>
-        </View>
-
-      
-        <View style={stylehome.cardSpacing}>
-          <Card>
-            <View style={stylehome.cardContent}>
-              <Image source={require('../../assets/icons/capsula.png')} style={stylehome.cardImage} />
-              <View style={stylehome.cardTextContainer}>
-                <Text style={stylehome.cardTitle}>Amoxicilina</Text>
-                <Text style={stylehome.cardDescription}>• 500mg</Text>
-                <Text style={stylehome.cardDescription}>• Antibiótico</Text>
-                <Text style={stylehome.cardDescription}>• Iniciado à 1m e 20d.</Text>
-              </View>
-            </View>
-            <Text style={stylehome.cardDetails}>
-              • Restam <Text style={stylehome.highlight}>12 cápsulas</Text>.
-            </Text>
-            <Text style={stylehome.cardDetails}>
-              Comprar novamente em <Text style={stylehome.highlight}>5 dias</Text>.
-            </Text>
-          </Card>
-        </View>
+        ))}
       </ScrollView>
 
       <FooterNavigation />
+
+      {selectedMedication && (
+        <ModalComponent
+          visible={modalVisible}
+          medication={selectedMedication}
+          onClose={() => setModalVisible(false)}
+        />
+      )}
     </View>
   );
 };

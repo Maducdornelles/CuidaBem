@@ -1,6 +1,8 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+// Importações das telas
 import LoginScreen from './src/pages/LoginScreen';
 import SignUpScreen from './src/pages/SignUpScreen';
 import HomeScreen from './src/pages/HomeScreen';
@@ -10,52 +12,33 @@ import UserScreen from './src/pages/UserScreen';
 import AddUserScreen from './src/pages/AddUserScreen';
 import MapScreen from './src/pages/MapScreen'; // Importe o MapScreen
 
+// Criação do Stack Navigator
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUpScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="Setting"
-          component={SettingScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="UserSettings"
-          component={UserSettings}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="UserScreen"
-          component={UserScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="AddUserScreen"
-          component={AddUserScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="MapScreen" // Adicione a rota MapScreen
-          component={MapScreen}
-          options={{ headerShown: false }}
-        />
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{ headerShown: false }} // Esconde o header globalmente
+      >
+        {/* Rotas de Autenticação */}
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+
+        {/* Rotas principais */}
+        <Stack.Screen name="Home" component={HomeScreen} />
+
+        {/* Rotas de Configuração */}
+        <Stack.Screen name="Setting" component={SettingScreen} />
+        <Stack.Screen name="UserSettings" component={UserSettings} />
+
+        {/* Rotas de Usuário */}
+        <Stack.Screen name="UserScreen" component={UserScreen} />
+        <Stack.Screen name="AddUserScreen" component={AddUserScreen} />
+
+        {/* Rota de Mapa */}
+        <Stack.Screen name="MapScreen" component={MapScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

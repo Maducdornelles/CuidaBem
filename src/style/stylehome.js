@@ -22,15 +22,14 @@ const stylehome = StyleSheet.create({
     fontSize: 16,
     color: '#FFFFFF',
     fontFamily: 'System',
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
   },
-  
   scrollContent: {
     alignItems: 'center',
     paddingBottom: 20,
   },
   cardSpacing: {
-    marginBottom: 9, 
+    marginBottom: 9,
   },
   cardContent: {
     flexDirection: 'row',
@@ -49,7 +48,7 @@ const stylehome = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontFamily: 'System',
-    fontWeight: 'bold', 
+    fontWeight: 'bold',
     color: '#000',
     marginBottom: 5,
   },
@@ -70,6 +69,7 @@ const stylehome = StyleSheet.create({
     color: '#C25B8C',
     fontWeight: 'bold',
   },
+ 
 });
 
 export default stylehome;
