@@ -62,7 +62,14 @@ const HomeScreen = () => {
                 </Text>
               </View>
             </View>
-            <Text style={stylehome.cardDetails}>{medication.details}</Text>
+
+          
+            <Text style={stylehome.cardDetails}>
+              • Restam <Text style={stylehome.highlight}>{medication.details.split('• Restam ')[1].split('.')[0]}</Text>.
+            </Text>
+            <Text style={stylehome.cardDetails}>
+            •  Comprar novamente em <Text style={stylehome.highlight}>{medication.details.split('Comprar novamente em ')[1].split('.')[0]}</Text>.
+            </Text>
           </Card>
         ))}
       </ScrollView>

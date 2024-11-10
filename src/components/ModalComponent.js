@@ -11,15 +11,21 @@ const ModalComponent = ({ visible, medication, onClose }) => {
       animationType="slide"
       onRequestClose={onClose}
     >
-      {/* Fechar o modal ao tocar fora */}
+    
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalContainer}>
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
-              {/* Informações do medicamento */}
+             
               <Text style={styles.modalTitle}>{medication.name}</Text>
               <Text style={styles.modalDescription}>{medication.description}</Text>
-              <Text style={styles.modalDetails}>{medication.details}</Text>
+
+              <Text style={styles.modalDetails}>
+                • Restam <Text style={styles.highlight}>{medication.details.split('• Restam ')[1].split('.')[0]}</Text>.
+              </Text>
+              <Text style={styles.modalDetails}>
+                • Comprar novamente em <Text style={styles.highlight}>{medication.details.split('• Comprar novamente em ')[1].split('.')[0]}</Text>.
+              </Text>
 
               {/* Switch para Habilitar Alarme */}
               <View style={styles.switchContainer}>
@@ -28,17 +34,17 @@ const ModalComponent = ({ visible, medication, onClose }) => {
                   value={isAlarmEnabled}
                   onValueChange={(value) => setIsAlarmEnabled(value)}
                   thumbColor={isAlarmEnabled ? '#00d8c1' : '#f4f3f4'}
-                  trackColor={{ false: '#767577', true: '#b8f2ee'  }} 
+                  trackColor={{ false: '#767577', true: '#b8f2ee' }} 
                 />
               </View>
 
               {/* Horários e Botões centralizados */}
               <View style={styles.centerContent}>
-                <Text style={styles.modalDetails}>Horários por dia:</Text>
-                <Text style={styles.modalDetails}>✓ 01:00</Text>
-                <Text style={styles.modalDetails}>07:00</Text>
-                <Text style={styles.modalDetails}>13:00</Text>
-                <Text style={styles.modalDetails}>19:00</Text>
+                <Text style={styles.modalSchedule}>Horários por dia:</Text>
+                <Text style={styles.modalSchedule}>01:00</Text>
+                <Text style={styles.modalSchedule}>07:00</Text>
+                <Text style={styles.modalSchedule}>13:00</Text>
+                <Text style={styles.modalSchedule}>19:00</Text>
 
                 {/* Botão "Adicionar mais" */}
                 <TouchableOpacity style={styles.primaryButton}>
@@ -81,7 +87,7 @@ const styles = {
     elevation: 5,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: 'bold',
     color: '#000',
     marginBottom: 10,
@@ -90,11 +96,17 @@ const styles = {
     fontSize: 14,
     color: '#000',
     marginBottom: 15,
+    fontWeight: 'bold',
   },
   modalDetails: {
     fontSize: 14,
     color: '#000',
     marginBottom: 5,
+    fontWeight: 'bold',
+  },
+  highlight: {
+    fontWeight: 'bold',
+    color: '#C25B8C', 
   },
   switchContainer: {
     flexDirection: 'row',
@@ -105,10 +117,18 @@ const styles = {
   switchLabel: {
     fontSize: 16,
     color: '#666',
+    
   },
   centerContent: {
     alignItems: 'center',
     marginBottom: 10,
+  },
+  modalSchedule: {
+    fontSize: 14,
+    color: '#000',
+    marginBottom: 5,
+    
+   
   },
   primaryButton: {
     width: 187,
