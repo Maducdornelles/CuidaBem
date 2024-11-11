@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
     textAlign: 'center',
-    fontFamily: 'System', // Fonte alterada para System
+    fontFamily: 'System', 
   },
   card: {
     width: 316, 
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
     color: '#000',
-    fontFamily: 'System', // Fonte alterada para System
+    fontFamily: 'System', 
   },
   changeButton: {
     width: 136,
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
-    fontFamily: 'System', // Fonte alterada para System
+    fontFamily: 'System', 
   },
   passwordContainer: {
     flexDirection: 'row',

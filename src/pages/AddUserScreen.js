@@ -13,14 +13,15 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
-import InputComponent from '../components/InputComponent'; 
+import InputComponent from '../components/InputComponent';
 import styles from '../style/styleadduser';
 
 const AddUserScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
+  const [imageModalVisible, setImageModalVisible] = useState(false);
+  const [profileModalVisible, setProfileModalVisible] = useState(false);
 
   const pickImage = async () => {
     try {
@@ -29,7 +30,7 @@ const AddUserScreen = ({ navigation }) => {
         Alert.alert('Permissão negada', 'Precisamos da permissão para acessar a galeria.');
         return;
       }
-      setModalVisible(true);
+      setImageModalVisible(true);
     } catch (error) {
       console.error('Erro ao solicitar permissão de galeria:', error);
     }
@@ -47,7 +48,7 @@ const AddUserScreen = ({ navigation }) => {
       if (!result.cancelled) {
         setImage(result.uri);
       }
-      setModalVisible(false);
+      setImageModalVisible(false);
     } catch (error) {
       console.error('Erro ao abrir a galeria:', error);
     }
@@ -69,15 +70,18 @@ const AddUserScreen = ({ navigation }) => {
       if (!result.cancelled) {
         setImage(result.uri);
       }
-      setModalVisible(false);
+      setImageModalVisible(false);
     } catch (error) {
       console.error('Erro ao abrir a câmera:', error);
     }
   };
 
   const saveProfile = () => {
-    // Salvar as alterações, por exemplo, via API ou armazenamento local
-    Alert.alert('Perfil atualizado!', `Nome: ${username}\nBio: ${bio}`);
+    if (username.trim() === '' || bio.trim() === '') {
+      Alert.alert('Campos obrigatórios', 'Por favor, preencha o nome de usuário e a bio.');
+      return;
+    }
+    setProfileModalVisible(true);
   };
 
   return (
@@ -131,22 +135,32 @@ const AddUserScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Modal para seleção de foto */}
-        <Modal visible={modalVisible} transparent>
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Escolher uma opção</Text>
-              <TouchableOpacity onPress={launchGallery} style={styles.modalButton}>
-                <Text style={styles.modalButtonText}>Escolher da galeria</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={launchCamera} style={styles.modalButton}>
-                <Text style={styles.modalButtonText}>Tirar foto</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalButton}>
-                <Text style={styles.modalButtonText}>Cancelar</Text>
-              </TouchableOpacity>
+       
+        <Modal visible={imageModalVisible} transparent>
+          <TouchableWithoutFeedback onPress={() => setImageModalVisible(false)}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Escolher uma opção</Text>
+                <TouchableOpacity onPress={launchGallery} style={styles.modalButton}>
+                  <Text style={styles.modalButtonText}>Escolher da galeria</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={launchCamera} style={styles.modalButton}>
+                  <Text style={styles.modalButtonText}>Tirar foto</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+
+       
+        <Modal visible={profileModalVisible} transparent>
+          <TouchableWithoutFeedback onPress={() => setProfileModalVisible(false)}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Perfil atualizado!</Text>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
         </Modal>
       </ScrollView>
     </KeyboardAvoidingView>

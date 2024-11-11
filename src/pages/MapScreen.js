@@ -115,7 +115,7 @@ const MapScreen = ({ navigation }) => {
 
   const clearSearch = () => {
     setSearch('');
-    setSelectedPharmacy(null); // Remove a farmácia selecionada ao limpar a pesquisa
+    setSelectedPharmacy(null); 
   };
 
   return (
@@ -131,7 +131,7 @@ const MapScreen = ({ navigation }) => {
         showsUserLocation
         followsUserLocation
       >
-        {/* Se houver farmácia selecionada, exibe apenas o marcador da farmácia pesquisada */}
+        
         {selectedPharmacy ? (
           <Marker
             coordinate={selectedPharmacy.coordinate}
@@ -142,13 +142,13 @@ const MapScreen = ({ navigation }) => {
             </Callout>
           </Marker>
         ) : (
-          // Caso contrário, exibe todos os marcadores das farmácias
+          
           pharmacies.map((pharmacy, index) => (
             <Marker
               key={index}
               coordinate={pharmacy.coordinate}
               pinColor="red"
-              onPress={() => setSelectedPharmacy(pharmacy)} // Exibe as informações ao clicar no marcador
+              onPress={() => setSelectedPharmacy(pharmacy)} 
             >
               <Callout>
                 <Text>{pharmacy.name}</Text>

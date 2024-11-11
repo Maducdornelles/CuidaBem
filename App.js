@@ -10,7 +10,8 @@ import SettingScreen from './src/pages/SettingScreen';
 import UserSettings from './src/pages/UserSettings';
 import UserScreen from './src/pages/UserScreen';
 import AddUserScreen from './src/pages/AddUserScreen';
-import MapScreen from './src/pages/MapScreen'; // Importe o MapScreen
+import MapScreen from './src/pages/MapScreen';
+import NotificationScreen from './src/pages/NotificationScreen'; // Importação ajustada
 
 // Criação do Stack Navigator
 const Stack = createNativeStackNavigator();
@@ -36,6 +37,9 @@ const App = () => {
         {/* Rotas de Usuário */}
         <Stack.Screen name="UserScreen" component={UserScreen} />
         <Stack.Screen name="AddUserScreen" component={AddUserScreen} />
+
+        {/* Rota de Notificação */}
+        <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
 
         {/* Rota de Mapa */}
         <Stack.Screen name="MapScreen" component={MapScreen} />
