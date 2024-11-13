@@ -6,7 +6,7 @@ import styles from '../style/styleuser';
 import FooterNavigation from '../components/FooterNavigation';
 
 const UserScreen = () => {
-  const navigation = useNavigation(); // Use o hook de navegação
+  const navigation = useNavigation(); 
 
   return (
     <View style={styles.container}>
@@ -61,7 +61,7 @@ const UserScreen = () => {
 
       <TouchableOpacity 
         style={styles.addButton} 
-        onPress={() => navigation.navigate('AddUserScreen')} // Adicione a navegação
+        onPress={() => navigation.navigate('AddUserScreen')} 
       >
         <Text style={styles.addButtonText}>Adicionar perfil</Text>
       </TouchableOpacity>

@@ -4,17 +4,20 @@ import { useNavigation } from '@react-navigation/native';
 import { Feather, AntDesign } from '@expo/vector-icons';
 
 const FooterNavigation = () => {
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
 
   return (
     <View style={styles.footer}>
       <TouchableOpacity onPress={() => navigation.navigate('Home')}>
         <Feather name="home" size={24} color="white" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('MapScreen')}> 
+      <TouchableOpacity onPress={() => navigation.navigate('MapScreen')}>
         <Feather name="map-pin" size={24} color="white" />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity 
+        style={styles.addButton} 
+        onPress={() => navigation.navigate('AddMedScreen')} 
+      >
         <AntDesign name="plus" size={36} color="white" />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('UserScreen')}>

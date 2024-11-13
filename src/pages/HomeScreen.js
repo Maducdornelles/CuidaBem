@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
-import stylehome from '../style/stylehome'; // Importação do estilo
-import Card from '../components/Card'; // Componente Card
-import FooterNavigation from '../components/FooterNavigation'; // Footer Navigation
-import ModalComponent from '../components/ModalComponent'; // Componente Modal
+import stylehome from '../style/stylehome'; 
+import Card from '../components/Card'; 
+import FooterNavigation from '../components/FooterNavigation'; 
+import ModalComponent from '../components/ModalComponent'; 
 
 const HomeScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMedication, setSelectedMedication] = useState(null);
 
-  // Dados originais dos remédios
+  
   const medications = [
     {
       id: '1',
