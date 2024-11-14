@@ -5,12 +5,10 @@ import Card from '../components/Card';
 import FooterNavigation from '../components/FooterNavigation'; 
 import ModalComponent from '../components/ModalComponent'; 
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMedication, setSelectedMedication] = useState(null);
-
-  
-  const medications = [
+  const [medications, setMedications] = useState([
     {
       id: '1',
       name: 'Quetiapina',
@@ -35,7 +33,13 @@ const HomeScreen = () => {
       description: '• 500mg\n• Antibiótico\n• Iniciado à 1m e 20d.',
       details: '• Restam 12 cápsulas.\n• Comprar novamente em 5 dias.',
     },
-  ];
+  ]);
+
+  const handleDelete = (id) => {
+    // Filtra os medicamentos para remover o medicamento com o id 
+    setMedications(prevMedications => prevMedications.filter(med => med.id !== id));
+    setModalVisible(false); 
+  };
 
   return (
     <View style={stylehome.container}>
@@ -63,12 +67,11 @@ const HomeScreen = () => {
               </View>
             </View>
 
-          
             <Text style={stylehome.cardDetails}>
               • Restam <Text style={stylehome.highlight}>{medication.details.split('• Restam ')[1].split('.')[0]}</Text>.
             </Text>
             <Text style={stylehome.cardDetails}>
-            •  Comprar novamente em <Text style={stylehome.highlight}>{medication.details.split('Comprar novamente em ')[1].split('.')[0]}</Text>.
+              • Comprar novamente em <Text style={stylehome.highlight}>{medication.details.split('Comprar novamente em ')[1].split('.')[0]}</Text>.
             </Text>
           </Card>
         ))}
@@ -81,6 +84,8 @@ const HomeScreen = () => {
           visible={modalVisible}
           medication={selectedMedication}
           onClose={() => setModalVisible(false)}
+          navigation={navigation}
+          onDelete={handleDelete} 
         />
       )}
     </View>

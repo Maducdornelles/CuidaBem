@@ -69,7 +69,7 @@ const AddMedScreen = ({ navigation }) => {
         <Text style={styles.headerText}>Cadastro de Medicamento</Text>
       </View>
 
-      {/* Formulário */}
+      
       <View style={{ marginBottom: 10 }}>
         <InputComponent placeholder="Nome do medicamento" style={styles.input} />
         <InputComponent placeholder="Descrição" multiline={true} style={[styles.input, { height: 80 }]} />
@@ -86,7 +86,7 @@ const AddMedScreen = ({ navigation }) => {
           <Feather name="chevron-down" size={20} color="#999" />
         </TouchableOpacity>
 
-        {/* Botão Frequência */}
+        
         <TouchableOpacity
           style={styles.frequencyButton}
           onPress={() => navigation.navigate('AlarmScreen')}
@@ -95,13 +95,12 @@ const AddMedScreen = ({ navigation }) => {
           <Feather name="clock" size={20} color="#fff" style={styles.frequencyIcon} />
         </TouchableOpacity>
 
-        {/* Switch Alarme */}
         <View style={styles.switchContainer}>
           <Text style={styles.switchLabel}>Habilitar Alarme</Text>
           <Switch value={alarmEnabled} onValueChange={(value) => setAlarmEnabled(value)} />
         </View>
 
-        {/* Botão Cadastrar */}
+        
         <View style={[footerStyles.footer, { marginTop: 10 }]}>
           <View style={footerStyles.secondaryButtonsContainer}>
             <TransparentButton title="Cadastrar" onPress={() => { }} />
@@ -111,7 +110,6 @@ const AddMedScreen = ({ navigation }) => {
 
       <FooterNavigation />
 
-      {/* Modal para Tipo */}
       <Modal
         transparent
         visible={openTypeModal}

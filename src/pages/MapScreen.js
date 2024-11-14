@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Ionicons, Feather } from '@expo/vector-icons';
@@ -12,86 +12,16 @@ const MapScreen = ({ navigation }) => {
   const [selectedPharmacy, setSelectedPharmacy] = useState(null);
 
   const pharmacies = [
-    {
-      name: 'Farmácia São João - São Cristóvão',
-      coordinate: { latitude: -28.2629, longitude: -52.4064 },
-      rating: 4.5,
-      address: 'Avenida Presidente Vargas, 1020',
-      cep: '99070-000',
-      phone: '(54) 3317-7070',
-    },
-    {
-      name: 'Farmácia Popular',
-      coordinate: { latitude: -28.2635, longitude: -52.4080 },
-      rating: 4.0,
-      address: 'Rua XV de Novembro, 500',
-      cep: '99070-100',
-      phone: '(54) 3311-1155',
-    },
-    {
-      name: 'Farmácia Droga Raia',
-      coordinate: { latitude: -28.2605, longitude: -52.4020 },
-      rating: 4.3,
-      address: 'Rua dos Andradas, 1100',
-      cep: '99010-000',
-      phone: '(54) 3317-5500',
-    },
-    {
-      name: 'Farmácia São João - Centro',
-      coordinate: { latitude: -28.2610, longitude: -52.4015 },
-      rating: 4.4,
-      address: 'Rua General Osório, 600',
-      cep: '99010-100',
-      phone: '(54) 3317-7000',
-    },
-    {
-      name: 'Farmácia Panvel',
-      coordinate: { latitude: -28.2650, longitude: -52.4100 },
-      rating: 4.6,
-      address: 'Avenida Brasil, 500',
-      cep: '99070-200',
-      phone: '(54) 3311-2233',
-    },
-    {
-      name: 'Farmácia São João - Boqueirão',
-      coordinate: { latitude: -28.2690, longitude: -52.4100 },
-      rating: 4.5,
-      address: 'Rua Boqueirão, 300',
-      cep: '99071-000',
-      phone: '(54) 3311-4455',
-    },
-    {
-      name: 'Farmácia Nacional',
-      coordinate: { latitude: -28.2700, longitude: -52.4110 },
-      rating: 4.1,
-      address: 'Rua Marechal Floriano, 700',
-      cep: '99071-100',
-      phone: '(54) 3317-7788',
-    },
-    {
-      name: 'Farmácia Lodi',
-      coordinate: { latitude: -28.2670, longitude: -52.4050 },
-      rating: 4.2,
-      address: 'Rua Rio Branco, 400',
-      cep: '99070-500',
-      phone: '(54) 3317-3322',
-    },
-    {
-      name: 'Farmácia Droga Raia - Bairro Petrópolis',
-      coordinate: { latitude: -28.2685, longitude: -52.4095 },
-      rating: 4.3,
-      address: 'Rua Petropolis, 1000',
-      cep: '99070-600',
-      phone: '(54) 3317-2255',
-    },
-    {
-      name: 'Farmácia Princesa',
-      coordinate: { latitude: -28.2640, longitude: -52.4025 },
-      rating: 4.0,
-      address: 'Rua João Pessoa, 800',
-      cep: '99010-200',
-      phone: '(54) 3311-9900',
-    },
+    { name: 'Farmácia São João - São Cristóvão', coordinate: { latitude: -28.2629, longitude: -52.4064 }, rating: 4.5, address: 'Avenida Presidente Vargas, 1020', cep: '99070-000', phone: '(54) 3317-7070' },
+    { name: 'Farmácia Panvel - Centro', coordinate: { latitude: -28.2635, longitude: -52.4050 }, rating: 4.8, address: 'Rua Morom, 285', cep: '99010-000', phone: '(54) 3314-1313' },
+    { name: 'Farmácia Pague Menos', coordinate: { latitude: -28.2660, longitude: -52.4085 }, rating: 4.3, address: 'Avenida Brasil Leste, 1325', cep: '99050-000', phone: '(54) 3317-2323' },
+    { name: 'Farmácia Econômica', coordinate: { latitude: -28.2640, longitude: -52.4030 }, rating: 4.0, address: 'Rua Bento Gonçalves, 740', cep: '99025-000', phone: '(54) 3313-1212' },
+    { name: 'Farmácia São Lucas', coordinate: { latitude: -28.2670, longitude: -52.4045 }, rating: 4.6, address: 'Rua Coronel Chicuta, 145', cep: '99010-000', phone: '(54) 3315-7878' },
+    { name: 'Farmácia Vida Farma', coordinate: { latitude: -28.2618, longitude: -52.4070 }, rating: 4.4, address: 'Rua Teixeira Soares, 990', cep: '99030-000', phone: '(54) 3316-6565' },
+    { name: 'Farmácia do Trabalhador', coordinate: { latitude: -28.2652, longitude: -52.4080 }, rating: 4.1, address: 'Rua Uruguai, 305', cep: '99020-000', phone: '(54) 3314-4141' },
+    { name: 'Farmácia São João - Vera Cruz', coordinate: { latitude: -28.2685, longitude: -52.4095 }, rating: 4.7, address: 'Avenida Salgado Filho, 890', cep: '99040-000', phone: '(54) 3318-9090' },
+    { name: 'Farmácia Popular', coordinate: { latitude: -28.2690, longitude: -52.4025 }, rating: 4.2, address: 'Rua Paissandu, 645', cep: '99035-000', phone: '(54) 3317-7171' },
+    { name: 'Farmácia Big Farma', coordinate: { latitude: -28.2700, longitude: -52.4060 }, rating: 4.5, address: 'Rua Independência, 1120', cep: '99045-000', phone: '(54) 3319-8989' },
   ];
 
   useEffect(() => {
@@ -115,7 +45,13 @@ const MapScreen = ({ navigation }) => {
 
   const clearSearch = () => {
     setSearch('');
-    setSelectedPharmacy(null); 
+    setSelectedPharmacy(null);
+  };
+
+  const handleLupaPress = () => {
+    if (!search.trim()) {
+      Alert.alert('Aviso', 'Por favor, digite algo no campo de busca.');
+    }
   };
 
   return (
@@ -131,24 +67,19 @@ const MapScreen = ({ navigation }) => {
         showsUserLocation
         followsUserLocation
       >
-        
         {selectedPharmacy ? (
-          <Marker
-            coordinate={selectedPharmacy.coordinate}
-            pinColor="red"
-          >
+          <Marker coordinate={selectedPharmacy.coordinate} pinColor="red">
             <Callout>
               <Text>{selectedPharmacy.name}</Text>
             </Callout>
           </Marker>
         ) : (
-          
           pharmacies.map((pharmacy, index) => (
             <Marker
               key={index}
               coordinate={pharmacy.coordinate}
               pinColor="red"
-              onPress={() => setSelectedPharmacy(pharmacy)} 
+              onPress={() => setSelectedPharmacy(pharmacy)}
             >
               <Callout>
                 <Text>{pharmacy.name}</Text>
@@ -183,7 +114,7 @@ const MapScreen = ({ navigation }) => {
             <Feather name="x" size={24} color="black" />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={() => handleSearch(search)}>
+          <TouchableOpacity onPress={handleLupaPress}>
             <Feather name="search" size={24} color="black" />
           </TouchableOpacity>
         )}

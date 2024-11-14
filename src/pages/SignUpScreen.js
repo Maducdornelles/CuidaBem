@@ -36,6 +36,10 @@ const SignUpScreen = ({ navigation }) => {
   };
 
   const navigateToLogin = () => {
+    if (!isChecked) {
+      Alert.alert("Erro", "Você precisa aceitar os termos de uso.");
+      return;
+    }
     navigation.navigate('Login');
   };
 
@@ -46,7 +50,6 @@ const SignUpScreen = ({ navigation }) => {
         style={styles.icon} 
       />
       
-      {/* Inputs com 15px de distância entre eles */}
       <InputComponent 
         placeholder="Nome de Usuário" 
         value={username} 

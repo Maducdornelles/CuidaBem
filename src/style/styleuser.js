@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     alignItems: 'center',
-    paddingBottom: 20,
+    paddingBottom: 50,
   },
   card: {
     marginVertical: 10,
@@ -67,6 +67,13 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     color: '#333333',
+  },
+  usernameText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginTop: 10,
+    color: '#2E7D8A',
+    marginBottom: 0,
   },
   medicationContainer: {
     flexDirection: 'row',
@@ -102,23 +109,36 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 
-  // Estilos do Modal
+  // Modal Styles
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // fundo semi-transparente
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     width: '80%',
-    padding: 20,
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#BDBDBD',
+    borderRadius: 50,
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   modalTitle: {
     fontSize: 18,
@@ -126,55 +146,43 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   textInput: {
+    width: '100%',
     height: 40,
-    borderColor: '#ccc',
+    borderColor: '#62A4B0',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 25,
     marginBottom: 10,
     paddingLeft: 10,
   },
   medicationLabel: {
-    fontSize: 16,
-    marginBottom: 5,
+    fontWeight: 'bold',
+    marginTop: 10,
   },
   saveButton: {
+    width: '100%',
+    height: 45,
     backgroundColor: '#62A4B0',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 20,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 25,
+    marginTop: 20,
   },
   saveButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
   },
   cancelButton: {
-    backgroundColor: '#E0E0E0',
-    padding: 10,
-    borderRadius: 5,
-    marginTop: 10,
+    width: '100%',
+    height: 45,
+    backgroundColor: '#BDBDBD',
+    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 25,
+    marginTop: 10,
   },
   cancelButtonText: {
-    color: '#333333',
+    color: '#FFFFFF',
     fontSize: 16,
-  },
-
-  // Estilos extras para o FooterNavigation
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    backgroundColor: '#FFFFFF',
-    paddingTop: 10,
-    paddingBottom: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 500,
-    color: '#fff',
   },
 });
 

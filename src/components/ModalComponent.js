@@ -1,19 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, Modal, TouchableOpacity, Switch, TouchableWithoutFeedback, Alert } from 'react-native';
-import { scheduleAlarms } from '../services/alarmService'; // Importar o serviço de alarmes
+import { scheduleAlarms } from '../services/alarmService'; 
 import * as Notifications from 'expo-notifications';
 
-const ModalComponent = ({ visible, medication, onClose }) => {
+const ModalComponent = ({ visible, medication, onClose, navigation, onDelete }) => {
   const [isAlarmEnabled, setIsAlarmEnabled] = useState(false);
   const [alarms, setAlarms] = useState([]);
 
-  // Função para habilitar/desabilitar o alarme
   const toggleAlarm = async (enabled) => {
     setIsAlarmEnabled(enabled);
     if (enabled) {
       try {
-        // Agendar alarmes para os horários fixos
-        const alarmTimes = ['01:00', '07:00', '13:00', '19:00'];
         const scheduledAlarms = await scheduleAlarms(new Date(), 6, medication.name);
         setAlarms(scheduledAlarms);
         Alert.alert('Alarme Ativado', 'O alarme foi configurado com sucesso!');
@@ -55,7 +52,6 @@ const ModalComponent = ({ visible, medication, onClose }) => {
                 • Comprar novamente em <Text style={styles.highlight}>{medication.details.split('• Comprar novamente em ')[1].split('.')[0]}</Text>.
               </Text>
 
-              {/* Switch para habilitar/desabilitar o alarme */}
               <View style={styles.switchContainer}>
                 <Text style={styles.switchLabel}>Habilitar Alarme</Text>
                 <Switch
@@ -66,7 +62,6 @@ const ModalComponent = ({ visible, medication, onClose }) => {
                 />
               </View>
 
-              {/* Exibir horários dos alarmes */}
               <View style={styles.centerContent}>
                 <Text style={styles.modalSchedule}>Horários por dia:</Text>
                 {alarms.length > 0 ? (
@@ -77,11 +72,17 @@ const ModalComponent = ({ visible, medication, onClose }) => {
                   <Text style={styles.modalSchedule}>Nenhum alarme configurado</Text>
                 )}
 
-                <TouchableOpacity style={styles.primaryButton}>
+                <TouchableOpacity
+                  style={styles.primaryButton}
+                  onPress={() => navigation.navigate('AddMedScreen')}
+                >
                   <Text style={styles.primaryButtonText}>Adicionar mais</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.secondaryButton} onPress={onClose}>
+                <TouchableOpacity
+                  style={styles.secondaryButton}
+                  onPress={() => onDelete(medication.id)} // Exclui o medicamento ao chamar onDelete
+                >
                   <Text style={styles.secondaryButtonText}>Excluir</Text>
                 </TouchableOpacity>
               </View>

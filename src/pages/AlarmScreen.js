@@ -13,7 +13,7 @@ const AlarmScreen = () => {
 
   const navigation = useNavigation();
 
-  // Função para lidar com a mudança de horário
+  
   const handleTimeChange = (event, time) => {
     setShowPicker(false);
     if (time) {
@@ -21,7 +21,7 @@ const AlarmScreen = () => {
     }
   };
 
-  // Função para agendar notificações
+  
   const scheduleNotifications = (alarmTimes) => {
     alarmTimes.forEach((time, index) => {
       const trigger = new Date(time);
@@ -58,7 +58,7 @@ const AlarmScreen = () => {
 
     // Agendar notificações
     scheduleNotifications(nextAlarms);
-    Alert.alert('Alarmes Agendados', 'Os alarmes foram agendados com sucesso!');
+    Alert.alert('Alarmes Agendados');
   };
 
   const handleIntervalChange = (value) => {
@@ -66,7 +66,7 @@ const AlarmScreen = () => {
     calculateNextAlarms();
   };
 
-  // Função para voltar à tela anterior
+
   const handleBackPress = () => {
     navigation.goBack();
   };

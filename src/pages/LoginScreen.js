@@ -1,31 +1,66 @@
-import React, { useState } from 'react';
-import { View, Image, Text, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Image, Text, Switch, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import InputComponent from '../components/InputComponent';
 import PrimaryButton from '../components/PrimaryButton';
 import SecondaryButton from '../components/SecondaryButton';
 import loginstyle from '../style/stylelogin';
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation } from '@react-navigation/native';
 
 const LoginScreen = () => {
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
   const [isRememberMe, setIsRememberMe] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  useEffect(() => {
+    const checkRememberMe = async () => {
+      try {
+        const savedUser = await AsyncStorage.getItem('user');
+        if (savedUser) {
+          const { username, password } = JSON.parse(savedUser);
+          setUsername(username);
+          setPassword(password);
+          navigation.navigate('User'); 
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados do usuário:', error);
+      }
+    };
+
+    checkRememberMe();
+  }, []);
+
   const toggleRememberMe = () => setIsRememberMe((prev) => !prev);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    if (username.trim() === '' || password.trim() === '') {
+      Alert.alert('Erro', 'Preencha todos os campos para continuar.');
+      return;
+    }
+
     console.log('Acessando a conta...');
-    navigation.navigate('Home'); 
+    
+    if (isRememberMe) {
+      try {
+        await AsyncStorage.setItem('user', JSON.stringify({ username, password }));
+      } catch (error) {
+        console.error('Erro ao salvar dados do usuário:', error);
+      }
+    } else {
+      await AsyncStorage.removeItem('user'); 
+    }
+
+    navigation.navigate('User');
   };
 
   const handleCreateAccount = () => {
-    navigation.navigate('SignUp'); 
+    navigation.navigate('SignUp');
   };
 
   const handleGuestAccess = () => {
     console.log('Entrar sem cadastro...');
-    navigation.navigate('Home'); 
+    navigation.navigate('Home');
   };
 
   return (
@@ -35,12 +70,11 @@ const LoginScreen = () => {
         style={loginstyle.icon} 
       />
 
-      {/* Inputs com largura de 312px e altura de 47px */}
       <InputComponent 
         placeholder="Usuário, E-mail ou Telefone" 
         value={username} 
         onChangeText={setUsername} 
-        style={{ width: 312, height: 47, marginBottom: 15}} 
+        style={{ width: 312, height: 47, marginBottom: 15 }} 
       />
       <InputComponent 
         placeholder="Senha" 
