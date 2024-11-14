@@ -1,8 +1,38 @@
-import React, { useState } from 'react';
-import { View, Text, Modal, TouchableOpacity, Switch, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Modal, TouchableOpacity, Switch, TouchableWithoutFeedback, Alert } from 'react-native';
+import { scheduleAlarms } from '../services/alarmService'; // Importar o serviço de alarmes
+import * as Notifications from 'expo-notifications';
 
 const ModalComponent = ({ visible, medication, onClose }) => {
   const [isAlarmEnabled, setIsAlarmEnabled] = useState(false);
+  const [alarms, setAlarms] = useState([]);
+
+  // Função para habilitar/desabilitar o alarme
+  const toggleAlarm = async (enabled) => {
+    setIsAlarmEnabled(enabled);
+    if (enabled) {
+      try {
+        // Agendar alarmes para os horários fixos
+        const alarmTimes = ['01:00', '07:00', '13:00', '19:00'];
+        const scheduledAlarms = await scheduleAlarms(new Date(), 6, medication.name);
+        setAlarms(scheduledAlarms);
+        Alert.alert('Alarme Ativado', 'O alarme foi configurado com sucesso!');
+      } catch (error) {
+        console.error('Erro ao agendar alarme:', error);
+        Alert.alert('Erro', 'Não foi possível configurar o alarme.');
+        setIsAlarmEnabled(false);
+      }
+    } else {
+      try {
+        await Notifications.cancelAllScheduledNotificationsAsync();
+        setAlarms([]);
+        Alert.alert('Alarme Desativado', 'Os alarmes foram cancelados com sucesso.');
+      } catch (error) {
+        console.error('Erro ao cancelar alarmes:', error);
+        Alert.alert('Erro', 'Não foi possível cancelar os alarmes.');
+      }
+    }
+  };
 
   return (
     <Modal
@@ -11,12 +41,10 @@ const ModalComponent = ({ visible, medication, onClose }) => {
       animationType="slide"
       onRequestClose={onClose}
     >
-    
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.modalContainer}>
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
-             
               <Text style={styles.modalTitle}>{medication.name}</Text>
               <Text style={styles.modalDescription}>{medication.description}</Text>
 
@@ -27,36 +55,33 @@ const ModalComponent = ({ visible, medication, onClose }) => {
                 • Comprar novamente em <Text style={styles.highlight}>{medication.details.split('• Comprar novamente em ')[1].split('.')[0]}</Text>.
               </Text>
 
-              {/* Switch para Habilitar Alarme */}
+              {/* Switch para habilitar/desabilitar o alarme */}
               <View style={styles.switchContainer}>
                 <Text style={styles.switchLabel}>Habilitar Alarme</Text>
                 <Switch
                   value={isAlarmEnabled}
-                  onValueChange={(value) => setIsAlarmEnabled(value)}
+                  onValueChange={toggleAlarm}
                   thumbColor={isAlarmEnabled ? '#00d8c1' : '#f4f3f4'}
-                  trackColor={{ false: '#767577', true: '#b8f2ee' }} 
+                  trackColor={{ false: '#767577', true: '#b8f2ee' }}
                 />
               </View>
 
-              {/* Horários e Botões centralizados */}
+              {/* Exibir horários dos alarmes */}
               <View style={styles.centerContent}>
                 <Text style={styles.modalSchedule}>Horários por dia:</Text>
-                <Text style={styles.modalSchedule}>01:00</Text>
-                <Text style={styles.modalSchedule}>07:00</Text>
-                <Text style={styles.modalSchedule}>13:00</Text>
-                <Text style={styles.modalSchedule}>19:00</Text>
+                {alarms.length > 0 ? (
+                  alarms.map((time, index) => (
+                    <Text key={index} style={styles.modalSchedule}>{time}</Text>
+                  ))
+                ) : (
+                  <Text style={styles.modalSchedule}>Nenhum alarme configurado</Text>
+                )}
 
-                {/* Botão "Adicionar mais" */}
                 <TouchableOpacity style={styles.primaryButton}>
                   <Text style={styles.primaryButtonText}>Adicionar mais</Text>
                 </TouchableOpacity>
 
-                {/* Botões "Editar" e "Excluir" */}
-                <TouchableOpacity style={styles.secondaryButton}>
-                  <Text style={styles.secondaryButtonText}>Editar</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.secondaryButton}>
+                <TouchableOpacity style={styles.secondaryButton} onPress={onClose}>
                   <Text style={styles.secondaryButtonText}>Excluir</Text>
                 </TouchableOpacity>
               </View>
@@ -106,7 +131,7 @@ const styles = {
   },
   highlight: {
     fontWeight: 'bold',
-    color: '#C25B8C', 
+    color: '#C25B8C',
   },
   switchContainer: {
     flexDirection: 'row',
@@ -117,7 +142,6 @@ const styles = {
   switchLabel: {
     fontSize: 16,
     color: '#666',
-    
   },
   centerContent: {
     alignItems: 'center',
@@ -127,8 +151,6 @@ const styles = {
     fontSize: 14,
     color: '#000',
     marginBottom: 5,
-    
-   
   },
   primaryButton: {
     width: 187,

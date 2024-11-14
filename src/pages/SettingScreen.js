@@ -28,7 +28,7 @@ const SettingScreen = ({ navigation }) => {
    
       <TouchableOpacity 
         style={styleSettings.button}
-        onPress={() => navigation.navigate('NotificationScreen')}
+        onPress={() => navigation.navigate('Notification')}
       >
         <Feather name="bell" size={35} color="white" /> 
         <Text style={styleSettings.buttonText}>Notificação</Text>

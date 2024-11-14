@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-    marginTop: 10,
-    marginBottom: 9,  // Alterado para 9px de espaçamento abaixo do botão Frequência
+    marginTop: 20,
+    marginBottom:35,  // Alterado para 9px de espaçamento abaixo do botão Frequência
     alignSelf: 'center',  // Centraliza o botão de frequência individualmente
   },
   buttonText: {

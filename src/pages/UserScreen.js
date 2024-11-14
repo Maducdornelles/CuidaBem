@@ -61,7 +61,7 @@ const UserScreen = () => {
 
       <TouchableOpacity 
         style={styles.addButton} 
-        onPress={() => navigation.navigate('AddUserScreen')} 
+        onPress={() => navigation.navigate('AddUser')} 
       >
         <Text style={styles.addButtonText}>Adicionar perfil</Text>
       </TouchableOpacity>

@@ -8,48 +8,51 @@ import styles from '../style/styleaddmed';
 
 const AddMedScreen = ({ navigation }) => {
   const [alarmEnabled, setAlarmEnabled] = useState(false);
-  const [openProfileModal, setOpenProfileModal] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState('');
   const [openTypeModal, setOpenTypeModal] = useState(false);
   const [selectedType, setSelectedType] = useState('');
 
   const renderModalContent = (type) => (
     <View style={modalStyles.modalCard}>
       <Text style={modalStyles.modalTitle}>
-        {type === 'profile' ? 'Escolha o Perfil' : 'Escolha o Tipo'}
+        {type === 'type' ? 'Escolha o Tipo' : ''}
       </Text>
-      {type === 'profile' ? (
-        <>
-          <TouchableOpacity onPress={() => { setSelectedProfile('Perfil 1'); setOpenProfileModal(false); }}>
-            <Text style={modalStyles.modalOption}>Perfil 1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedProfile('Perfil 2'); setOpenProfileModal(false); }}>
-            <Text style={modalStyles.modalOption}>Perfil 2</Text>
-          </TouchableOpacity>
-        </>
-      ) : (
+      {type === 'type' ? (
         <>
           <TouchableOpacity onPress={() => { setSelectedType('Comprimido'); setOpenTypeModal(false); }}>
             <Text style={modalStyles.modalOption}>Comprimido</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Ml'); setOpenTypeModal(false); }}>
-            <Text style={modalStyles.modalOption}>Ml</Text>
+          <TouchableOpacity onPress={() => { setSelectedType('Cápsula'); setOpenTypeModal(false); }}>
+            <Text style={modalStyles.modalOption}>Cápsula</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Gotas'); setOpenTypeModal(false); }}>
-            <Text style={modalStyles.modalOption}>Gotas</Text>
+          <TouchableOpacity onPress={() => { setSelectedType('Colírio'); setOpenTypeModal(false); }}>
+            <Text style={modalStyles.modalOption}>Colírio</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Injeção'); setOpenTypeModal(false); }}>
-            <Text style={modalStyles.modalOption}>Injeção</Text>
+          <TouchableOpacity onPress={() => { setSelectedType('Solução Tópica'); setOpenTypeModal(false); }}>
+            <Text style={modalStyles.modalOption}>Solução tópica</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { setSelectedType('Solução Injetável'); setOpenTypeModal(false); }}>
+            <Text style={modalStyles.modalOption}>Solução injetável</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { setSelectedType('Pastilha'); setOpenTypeModal(false); }}>
+            <Text style={modalStyles.modalOption}>Pastilha</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { setSelectedType('Pomada'); setOpenTypeModal(false); }}>
+            <Text style={modalStyles.modalOption}>Pomada</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { setSelectedType('Creme'); setOpenTypeModal(false); }}>
+            <Text style={modalStyles.modalOption}>Creme</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { setSelectedType('Gel'); setOpenTypeModal(false); }}>
+            <Text style={modalStyles.modalOption}>Gel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { setSelectedType('Supositório'); setOpenTypeModal(false); }}>
+            <Text style={modalStyles.modalOption}>Supositório</Text>
           </TouchableOpacity>
         </>
-      )}
+      ) : null}
       <TouchableOpacity
         style={modalStyles.modalButton}
-        onPress={() => {
-          if (type === 'profile') setSelectedProfile('');
-          else setSelectedType('');
-          type === 'profile' ? setOpenProfileModal(false) : setOpenTypeModal(false);
-        }}
+        onPress={() => { setSelectedType(''); setOpenTypeModal(false); }}
       >
         <Text style={modalStyles.modalButtonText}>Limpar Seleção</Text>
       </TouchableOpacity>
@@ -72,20 +75,9 @@ const AddMedScreen = ({ navigation }) => {
         <InputComponent placeholder="Descrição" multiline={true} style={[styles.input, { height: 80 }]} />
         <InputComponent placeholder="Quantidade" style={styles.input} />
 
-        <Text style={{ color: '#999', marginBottom: 5 ,}}>Perfil</Text>
-        <TouchableOpacity
-          style={[styles.picker, { width: 312, height: 47, alignSelf: 'center' }]} // Centralizado
-          onPress={() => setOpenProfileModal(true)}
-        >
-          <Text style={{ color: selectedProfile ? '#333' : '#999' }}>
-            {selectedProfile || 'Selecione o Perfil'}
-          </Text>
-          <Feather name="chevron-down" size={20} color="#999" />
-        </TouchableOpacity>
-
         <Text style={{ color: '#999', marginBottom: 5 }}>Tipo</Text>
         <TouchableOpacity
-          style={[styles.picker, { width: 312, height: 47, alignSelf: 'center' }]} // Centralizado
+          style={[styles.picker, { width: 312, height: 47, alignSelf: 'center' }]}
           onPress={() => setOpenTypeModal(true)}
         >
           <Text style={{ color: selectedType ? '#333' : '#999' }}>
@@ -97,9 +89,7 @@ const AddMedScreen = ({ navigation }) => {
         {/* Botão Frequência */}
         <TouchableOpacity
           style={styles.frequencyButton}
-          onPress={() => {
-            console.log('Botão Frequência clicado!');
-          }}
+          onPress={() => navigation.navigate('AlarmScreen')}
         >
           <Text style={styles.buttonText}>Frequência</Text>
           <Feather name="clock" size={20} color="#fff" style={styles.frequencyIcon} />
@@ -120,18 +110,6 @@ const AddMedScreen = ({ navigation }) => {
       </View>
 
       <FooterNavigation />
-
-      {/* Modal para Perfil */}
-      <Modal
-        transparent
-        visible={openProfileModal}
-        animationType="fade"
-        onRequestClose={() => setOpenProfileModal(false)}
-      >
-        <View style={modalStyles.modalContainer}>
-          {renderModalContent('profile')}
-        </View>
-      </Modal>
 
       {/* Modal para Tipo */}
       <Modal
@@ -179,6 +157,7 @@ const modalStyles = StyleSheet.create({
     justifyContent: 'space-between',
     maxHeight: 400,
     overflow: 'scroll',
+    maxHeight: 500,
   },
   modalTitle: {
     fontSize: 18,
