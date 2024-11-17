@@ -10,7 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [isRememberMe, setIsRememberMe] = useState(false);
-  const [username, setUsername] = useState('');
+  const [name, setname] = useState('');
   const [password, setPassword] = useState('');
 
   useEffect(() => {
@@ -18,8 +18,8 @@ const LoginScreen = () => {
       try {
         const savedUser = await AsyncStorage.getItem('user');
         if (savedUser) {
-          const { username, password } = JSON.parse(savedUser);
-          setUsername(username);
+          const { name, password } = JSON.parse(savedUser);
+          setname(name);
           setPassword(password);
           navigation.navigate('User'); 
         }
@@ -34,25 +34,48 @@ const LoginScreen = () => {
   const toggleRememberMe = () => setIsRememberMe((prev) => !prev);
 
   const handleLogin = async () => {
-    if (username.trim() === '' || password.trim() === '') {
+    if (name.trim() === '' || password.trim() === '') {
       Alert.alert('Erro', 'Preencha todos os campos para continuar.');
       return;
     }
-
+  
     console.log('Acessando a conta...');
     
-    if (isRememberMe) {
-      try {
-        await AsyncStorage.setItem('user', JSON.stringify({ username, password }));
-      } catch (error) {
-        console.error('Erro ao salvar dados do usuário:', error);
+    try {
+      const response = await fetch('http://192.168.18.149:8080/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: name,  // Certifique-se de que está enviando "email" e não "name"
+          password: password,
+        }),
+      });
+  
+      // Verifique se a resposta da API não está vazia
+      if (response.ok) {
+        const token = await response.json(); 
+        navigation.navigate('User', { token: token }); // Passe o token para a tela de perfil
+        //console.log(token)
+        // Salvar as credenciais no AsyncStorage se "lembrar" estiver ativado
+        if (isRememberMe) {
+          await AsyncStorage.setItem('user', JSON.stringify({ name, password }));
+        } else {
+          await AsyncStorage.removeItem('user');
+        }
+        
+        //navigation.navigate('User');
+      } else {
+        const errorData = await response.text();  // Se o corpo da resposta não for JSON, trate como texto
+        Alert.alert('Erro', errorData);
       }
-    } else {
-      await AsyncStorage.removeItem('user'); 
+    } catch (error) {
+      console.error('Erro ao acessar a API:', error);
+      Alert.alert('Erro', 'Ocorreu um erro ao tentar autenticar. Tente novamente.');
     }
-
-    navigation.navigate('User');
   };
+  
 
   const handleCreateAccount = () => {
     navigation.navigate('SignUp');
@@ -72,8 +95,8 @@ const LoginScreen = () => {
 
       <InputComponent 
         placeholder="Usuário, E-mail ou Telefone" 
-        value={username} 
-        onChangeText={setUsername} 
+        value={name} 
+        onChangeText={setname} 
         style={{ width: 312, height: 47, marginBottom: 15 }} 
       />
       <InputComponent 

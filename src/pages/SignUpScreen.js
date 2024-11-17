@@ -7,33 +7,63 @@ import styles from '../style/stylesignup';
 
 const SignUpScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
-  const [username, setUsername] = useState('');
+  const [name, setname] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const toggleSwitch = () => setChecked(previousState => !previousState);
+  const toggleSwitch = () => setChecked((previousState) => !previousState);
 
-  const handleCreateAccount = () => {
-    if (!username || !phone || !email || !password || !confirmPassword) {
+  const handleCreateAccount = async () => {
+    if (!name || !phone || !email || !password || !confirmPassword) {
       Alert.alert("Erro", "Por favor, preencha todos os campos.");
       return;
     }
-    
     if (password !== confirmPassword) {
       Alert.alert("Erro", "As senhas não coincidem.");
       return;
     }
-
     if (!isChecked) {
       Alert.alert("Erro", "Você precisa aceitar os termos de uso.");
       return;
     }
-
-    console.log('Criar conta pressionado');
-    navigation.navigate('Login');
+  
+    try {
+      const requestBody = {
+        email: email,
+        password: password,
+        name: name,
+      };
+  
+      const response = await fetch('http://192.168.18.149:8080/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+  
+      if (response.ok) {
+        try {
+          const data = await response.json(); // Tenta interpretar como JSON
+          Alert.alert("Sucesso", data?.message || "Conta criada com sucesso!");
+        } catch (error) {
+          // Caso a resposta seja vazia ou não seja JSON válido
+          console.warn("A resposta não é um JSON válido ou está vazia.", error);
+          Alert.alert("Sucesso", "Conta criada com sucesso!");
+        }
+        navigation.navigate('Login');
+      } else {
+        const errorData = await response.json() || String;
+        Alert.alert("Erro", errorData?.message || "Ocorreu um erro ao criar a conta.");
+      }
+    } catch (error) {
+      console.error("Erro ao criar conta:");
+      Alert.alert("Erro ao criar conta");
+    }
   };
+  
 
   const navigateToLogin = () => {
     if (!isChecked) {
@@ -52,8 +82,8 @@ const SignUpScreen = ({ navigation }) => {
       
       <InputComponent 
         placeholder="Nome de Usuário" 
-        value={username} 
-        onChangeText={setUsername}
+        value={name} 
+        onChangeText={setname}
         style={{ marginBottom: 15 }}
         width={312} 
       />

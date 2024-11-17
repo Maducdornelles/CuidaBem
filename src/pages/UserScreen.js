@@ -1,42 +1,55 @@
-import React, { useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, Modal, TextInput } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, ScrollView, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Card from '../components/Card';
 import styles from '../style/styleuser';
 import FooterNavigation from '../components/FooterNavigation';
 
 const UserScreen = () => {
   const navigation = useNavigation();
-
-  
-  const [profiles, setProfiles] = useState([
-    {
-      id: 1,
-      username: 'Maria Souza',
-      image: require('../../assets/icons/capsula.png'),
-      bio: '33 anos, mãe, esposa e empresária. A dedicação é essencial.',
-      medications: ['Quetiapina', 'Sertralina', 'Omeprazol', 'Microvlar'],
-    },
-    {
-      id: 2,
-      username: 'João Pereira',
-      image: require('../../assets/icons/capsula.png'),
-      bio: '12 anos, estudante atípico. Neurodivergente em tratamento das comorbidades.',
-      medications: ['Aripiprazol', 'Lítio', 'Ziprasidona'],
-    },
-  ]);
-
-  // Estado para controlar a visibilidade do modal
+  const route = useRoute();
+  const { token } = route.params; // Obtenha o token passado pela navegação
+  const [profiles, setProfiles] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedProfile, setSelectedProfile] = useState(null);
 
-  // Função para abrir o modal e preencher com as informações do perfil
+  useEffect(() => {
+    const fetchProfiles = async () => {
+      console.log(token)
+      try {
+        setLoading(true);
+        const response = await fetch('http://192.168.18.149:8080/profiles/select', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // Adicione o token no cabeçalho
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setProfiles(data); // Atualize a lista de perfis com os dados retornados
+        } else {
+          const errorMessage = await response.text();
+          Alert.alert('Erro', `Erro ao buscar perfis: ${errorMessage}`);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar perfis:', error);
+        Alert.alert('Erro', 'Ocorreu um erro ao buscar os perfis.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfiles();
+  }, [token]); // Dependência do token
+
   const openModal = (profile) => {
     setSelectedProfile(profile);
     setModalVisible(true);
   };
 
-  // Função para editar o perfil
   const handleEditProfile = () => {
     const updatedProfiles = profiles.map((profile) =>
       profile.id === selectedProfile.id ? selectedProfile : profile
@@ -45,7 +58,6 @@ const UserScreen = () => {
     setModalVisible(false);
   };
 
-  // Função para excluir o perfil
   const handleDeleteProfile = () => {
     const updatedProfiles = profiles.filter((profile) => profile.id !== selectedProfile.id);
     setProfiles(updatedProfiles);
@@ -63,28 +75,23 @@ const UserScreen = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.cardContainer}>
-        {profiles.map((profile) => (
-          <View style={styles.cardSpacing} key={profile.id}>
-            <Card>
-              <TouchableOpacity onPress={() => openModal(profile)}>
-                <View style={styles.cardContent}>
-                  <View style={styles.iconContainer}>
-                    <Image style={styles.profileImage} source={profile.image} />
-                    <Text style={styles.usernameText}>{profile.username}</Text>
+        {loading ? (
+          <Text>Carregando perfis...</Text>
+        ) : (
+          profiles.map((profile) => (
+            <View style={styles.cardSpacing} key={profile.id}>
+              <Card>
+                <TouchableOpacity onPress={() => openModal(profile)}>
+                  <View style={styles.cardContent}>
+                    <View style={styles.iconContainer}>
+                      <Text style={styles.usernameText}>{profile.username}</Text>
+                    </View>
                   </View>
-                  <Text style={styles.bioText}>{profile.bio}</Text>
-                </View>
-                <View style={styles.medicationContainer}>
-                  {profile.medications.map((medication, index) => (
-                    <Text style={styles.medicationText} key={index}>
-                      {medication}
-                    </Text>
-                  ))}
-                </View>
-              </TouchableOpacity>
-            </Card>
-          </View>
-        ))}
+                </TouchableOpacity>
+              </Card>
+            </View>
+          ))
+        )}
       </ScrollView>
 
       <TouchableOpacity
@@ -96,7 +103,6 @@ const UserScreen = () => {
 
       <FooterNavigation />
 
-      {/* Modal para editar ou excluir o perfil */}
       <Modal
         transparent={true}
         visible={modalVisible}
@@ -105,7 +111,6 @@ const UserScreen = () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            {/* Botão X para excluir */}
             <TouchableOpacity onPress={handleDeleteProfile} style={styles.closeButton}>
               <Text style={styles.closeButtonText}>X</Text>
             </TouchableOpacity>
@@ -115,31 +120,11 @@ const UserScreen = () => {
             <TextInput
               style={styles.textInput}
               value={selectedProfile?.username}
-              onChangeText={(text) => setSelectedProfile({ ...selectedProfile, username: text })}
+              onChangeText={(text) =>
+                setSelectedProfile((prev) => ({ ...prev, username: text }))
+              }
               placeholder="Nome de usuário"
             />
-
-            <TextInput
-              style={styles.textInput}
-              value={selectedProfile?.bio}
-              onChangeText={(text) => setSelectedProfile({ ...selectedProfile, bio: text })}
-              placeholder="Edit Bio"
-            />
-
-            <Text style={styles.medicationLabel}>Medicações:</Text>
-            {selectedProfile?.medications.map((medication, index) => (
-              <TextInput
-                key={index}
-                style={styles.textInput}
-                value={medication}
-                onChangeText={(text) => {
-                  const updatedMedications = [...selectedProfile.medications];
-                  updatedMedications[index] = text;
-                  setSelectedProfile({ ...selectedProfile, medications: updatedMedications });
-                }}
-                placeholder={`Medicação ${index + 1}`}
-              />
-            ))}
 
             <TouchableOpacity
               style={styles.saveButton}
