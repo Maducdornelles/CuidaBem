@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,16 +11,19 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { AntDesign, Feather, FontAwesome } from '@expo/vector-icons'; 
-import InputComponent from '../components/InputComponent'; 
-import styles from '../style/styleusersettings'; 
+import { AntDesign, Feather, FontAwesome } from '@expo/vector-icons';
+import InputComponent from '../components/InputComponent';
+import styles from '../style/styleusersettings';
 
-const UserSettings = ({ navigation }) => { 
+const UserSettings = ({ navigation, route }) => {
+  const { token, profileId } = route.params;
+
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [image, setImage] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false); 
+  const [modalVisible, setModalVisible] = useState(false);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -29,7 +32,7 @@ const UserSettings = ({ navigation }) => {
       return;
     }
 
-    setModalVisible(true); 
+    setModalVisible(true);
   };
 
   const launchGallery = async () => {
@@ -62,8 +65,32 @@ const UserSettings = ({ navigation }) => {
     if (!result.cancelled) {
       setImage(result.uri);
     }
-    setModalVisible(false); 
+    setModalVisible(false);
   };
+
+  const deleteUser = async () => {
+    try {
+      const response = await fetch('http://192.168.220.233:8080/auth/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Passando o token no header
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao deletar usuário');
+      }
+
+      const result = await response.json();
+      Alert.alert('Sucesso', 'Usuário deletado com sucesso.');
+      navigation.navigate('Login'); // Redireciona para a tela de login após excluir o usuário
+    } catch (error) {
+      Alert.alert('Erro', error.message);
+    }
+  };
+
+  useEffect(() => {}, [token, profileId]);
 
   return (
     <KeyboardAvoidingView
@@ -83,12 +110,12 @@ const UserSettings = ({ navigation }) => {
             {image ? (
               <Image source={{ uri: image }} style={styles.imagePreview} />
             ) : (
-              <FontAwesome name="camera" size={60} color="#60A2AE" /> 
+              <FontAwesome name="camera" size={60} color="#60A2AE" />
             )}
           </TouchableOpacity>
 
           <Text style={styles.label}>Email</Text>
-          <InputComponent placeholder="Digite seu email" keyboardType="email-address" width={290} /> 
+          <InputComponent placeholder="Digite seu email" keyboardType="email-address" width={290} />
           <TouchableOpacity style={styles.changeButton}>
             <Text style={styles.buttonText}>Trocar</Text>
           </TouchableOpacity>
@@ -100,10 +127,7 @@ const UserSettings = ({ navigation }) => {
               secureTextEntry={!passwordVisible}
               width={290}
             />
-            <TouchableOpacity
-              onPress={() => setPasswordVisible(!passwordVisible)}
-              style={styles.eyeIcon}
-            >
+            <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} style={styles.eyeIcon}>
               <Feather name={passwordVisible ? 'eye' : 'eye-off'} size={24} color="#000" />
             </TouchableOpacity>
           </View>
@@ -111,12 +135,16 @@ const UserSettings = ({ navigation }) => {
           <TouchableOpacity style={styles.changeButton}>
             <Text style={styles.buttonText}>Trocar</Text>
           </TouchableOpacity>
+
+          {/* Botão de Deletar Usuário */}
+          <TouchableOpacity onPress={deleteUser} style={styles.deleteButton}>
+            <Text style={styles.buttonText}>Deletar Conta</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
 
       <View style={styles.bottomBar}></View>
 
-     
       <Modal
         animationType="slide"
         transparent={true}
@@ -143,13 +171,12 @@ const UserSettings = ({ navigation }) => {
   );
 };
 
-
 const modalStyles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     width: '80%',
@@ -175,6 +202,13 @@ const modalStyles = StyleSheet.create({
   modalButtonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
+  },
+  deleteButton: {
+    backgroundColor: 'red',
+    padding: 15,
+    borderRadius: 5,
+    marginTop: 20,
+    alignItems: 'center',
   },
 });
 

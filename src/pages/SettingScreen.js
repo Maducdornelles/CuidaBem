@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Feather, AntDesign } from '@expo/vector-icons';
 import styleSettings from '../style/stylesetting';
 
-const SettingScreen = ({ navigation }) => {
+const SettingScreen = ({ navigation, route }) => {
+  const { token, profileId } = route.params;
+
   return (
     <View style={styleSettings.container}>
       <View style={{ height: 30 }} />  
@@ -19,13 +21,12 @@ const SettingScreen = ({ navigation }) => {
 
       <TouchableOpacity 
         style={styleSettings.button} 
-        onPress={() => navigation.navigate('UserSettings')}
+        onPress={() => navigation.navigate('UserSettings', { token, profileId })}
       >
         <Feather name="user" size={35} color="white" /> 
         <Text style={styleSettings.buttonText}>Usuário</Text>
       </TouchableOpacity>
 
-   
       <TouchableOpacity 
         style={styleSettings.button}
         onPress={() => navigation.navigate('Notification')}

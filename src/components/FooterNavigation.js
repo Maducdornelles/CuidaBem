@@ -61,7 +61,7 @@ const FooterNavigation = () => {
       <TouchableOpacity onPress={() => navigation.navigate('User', { token, profileId })}>
         <Feather name="user" size={24} color="white" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Setting', { token, profileId })}>
         <Feather name="settings" size={24} color="white" />
       </TouchableOpacity>
       <TouchableOpacity onPress={handleLogout}>
