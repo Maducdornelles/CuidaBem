@@ -1,67 +1,84 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { View, Text, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import Card from '../components/Card';
 import styles from '../style/styleuser';
 import FooterNavigation from '../components/FooterNavigation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const UserScreen = () => {
+const UserScreen = ({ route }) => {
   const navigation = useNavigation();
-  const route = useRoute();
-  const { token } = route.params; // Obtenha o token passado pela navegação
-  const [profiles, setProfiles] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState(null);
+  const { token } = route.params || {}; // Recebe apenas o token
+
+  const [profiles, setProfiles] = useState([]); // Inicializa o estado vazio
+
+  // Função para salvar o profileId no AsyncStorage
+  const saveProfileId = async (profileId) => {
+    try {
+      await AsyncStorage.setItem('profileId', profileId.toString());
+      console.log(`ProfileId salvo no AsyncStorage: ${profileId}`);
+    } catch (error) {
+      console.error('Erro ao salvar profileId no AsyncStorage:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchProfiles = async () => {
-      console.log(token)
       try {
-        setLoading(true);
-        const response = await fetch('http://192.168.18.149:8080/profiles/select', {
+        const response = await fetch('http://192.168.220.233:8080/profiles/select', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // Adicione o token no cabeçalho
+            Authorization: `Bearer ${token}`, // Passa o token no header
           },
         });
 
         if (response.ok) {
-          const data = await response.json();
-          setProfiles(data); // Atualize a lista de perfis com os dados retornados
+          const data = await response.json(); // Recebe os dados da API
+          const enrichedProfiles = data.map((profile) => ({
+            ...profile,
+            image: require('../../assets/icons/capsula.png'),
+            bio: `Perfil de ${profile.name}`,
+            medications: [],
+          }));
+          setProfiles(enrichedProfiles);
         } else {
           const errorMessage = await response.text();
+          console.error('Erro ao buscar perfis:', errorMessage);
           Alert.alert('Erro', `Erro ao buscar perfis: ${errorMessage}`);
         }
       } catch (error) {
         console.error('Erro ao buscar perfis:', error);
-        Alert.alert('Erro', 'Ocorreu um erro ao buscar os perfis.');
-      } finally {
-        setLoading(false);
+        Alert.alert('Erro', 'Não foi possível carregar os perfis.');
       }
     };
 
-    fetchProfiles();
-  }, [token]); // Dependência do token
+    if (token) fetchProfiles();
+  }, [token]);
 
-  const openModal = (profile) => {
-    setSelectedProfile(profile);
-    setModalVisible(true);
-  };
+  const selectProfile = async (profileId) => {
+    try {
+      const response = await fetch(`http://192.168.220.233:8080/profiles/select/${profileId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
 
-  const handleEditProfile = () => {
-    const updatedProfiles = profiles.map((profile) =>
-      profile.id === selectedProfile.id ? selectedProfile : profile
-    );
-    setProfiles(updatedProfiles);
-    setModalVisible(false);
-  };
+      if (response.ok) {
+        await saveProfileId(profileId);
 
-  const handleDeleteProfile = () => {
-    const updatedProfiles = profiles.filter((profile) => profile.id !== selectedProfile.id);
-    setProfiles(updatedProfiles);
-    setModalVisible(false);
+        navigation.navigate('Home', { token, profileId });
+      } else {
+        const errorMessage = await response.text();
+        console.error('Erro ao selecionar o perfil:', errorMessage);
+        Alert.alert('Erro', `Erro ao selecionar perfil: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error('Erro ao selecionar o perfil:', error);
+      Alert.alert('Erro', 'Não foi possível selecionar o perfil.');
+    }
   };
 
   return (
@@ -75,23 +92,28 @@ const UserScreen = () => {
       </View>
 
       <ScrollView contentContainerStyle={styles.cardContainer}>
-        {loading ? (
-          <Text>Carregando perfis...</Text>
-        ) : (
-          profiles.map((profile) => (
-            <View style={styles.cardSpacing} key={profile.id}>
-              <Card>
-                <TouchableOpacity onPress={() => openModal(profile)}>
-                  <View style={styles.cardContent}>
-                    <View style={styles.iconContainer}>
-                      <Text style={styles.usernameText}>{profile.username}</Text>
-                    </View>
+        {profiles.map((profile) => (
+          <View style={styles.cardSpacing} key={profile.id}>
+            <Card>
+              <TouchableOpacity onPress={() => selectProfile(profile.id)}>
+                <View style={styles.cardContent}>
+                  <View style={styles.iconContainer}>
+                    <Image style={styles.profileImage} source={profile.image} />
+                    <Text style={styles.usernameText}>{profile.name}</Text>
                   </View>
-                </TouchableOpacity>
-              </Card>
-            </View>
-          ))
-        )}
+                  <Text style={styles.bioText}>{profile.bio}</Text>
+                </View>
+                <View style={styles.medicationContainer}>
+                  {profile.medications.map((medication, index) => (
+                    <Text style={styles.medicationText} key={index}>
+                      {medication}
+                    </Text>
+                  ))}
+                </View>
+              </TouchableOpacity>
+            </Card>
+          </View>
+        ))}
       </ScrollView>
 
       <TouchableOpacity
@@ -102,46 +124,6 @@ const UserScreen = () => {
       </TouchableOpacity>
 
       <FooterNavigation />
-
-      <Modal
-        transparent={true}
-        visible={modalVisible}
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity onPress={handleDeleteProfile} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>X</Text>
-            </TouchableOpacity>
-
-            <Text style={styles.modalTitle}>Editar Perfil</Text>
-
-            <TextInput
-              style={styles.textInput}
-              value={selectedProfile?.username}
-              onChangeText={(text) =>
-                setSelectedProfile((prev) => ({ ...prev, username: text }))
-              }
-              placeholder="Nome de usuário"
-            />
-
-            <TouchableOpacity
-              style={styles.saveButton}
-              onPress={handleEditProfile}
-            >
-              <Text style={styles.saveButtonText}>Salvar</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };

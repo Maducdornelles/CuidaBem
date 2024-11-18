@@ -1,42 +1,77 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, Image, Alert } from 'react-native';
 import stylehome from '../style/stylehome'; 
 import Card from '../components/Card'; 
 import FooterNavigation from '../components/FooterNavigation'; 
 import ModalComponent from '../components/ModalComponent'; 
+import { useFocusEffect } from '@react-navigation/native'; 
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
+  const [token, setToken] = useState(null);
+  const [profileId, setProfileId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMedication, setSelectedMedication] = useState(null);
-  const [medications, setMedications] = useState([
-    {
-      id: '1',
-      name: 'Quetiapina',
-      description: '• 25mg\n• Antipsicótico atípico\n• Iniciado à 2m e 10d.',
-      details: '• Restam 7 cápsulas.\n• Comprar novamente em 6 dias.',
-    },
-    {
-      id: '2',
-      name: 'Paracetamol',
-      description: '• 500mg\n• Analgésico\n• Iniciado à 1m e 15d.',
-      details: '• Restam 5 comprimidos.\n• Comprar novamente em 3 dias.',
-    },
-    {
-      id: '3',
-      name: 'Ibuprofeno',
-      description: '• 200mg\n• Anti-inflamatório\n• Iniciado à 3m e 7d.',
-      details: '• Restam 10 comprimidos.\n• Comprar novamente em 8 dias.',
-    },
-    {
-      id: '4',
-      name: 'Amoxicilina',
-      description: '• 500mg\n• Antibiótico\n• Iniciado à 1m e 20d.',
-      details: '• Restam 12 cápsulas.\n• Comprar novamente em 5 dias.',
-    },
-  ]);
+  const [medications, setMedications] = useState([]);
+
+  // Função para buscar os medicamentos da API
+  const fetchMedications = async () => {
+    try {
+      const response = await fetch('http://192.168.220.233:8080/medicamento/list', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Active-Profile': profileId, 
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json(); 
+        setMedications(data); 
+      } else {
+        const errorMessage = await response.text();
+        console.error('Erro ao buscar medicamentos:', errorMessage);
+        Alert.alert('Erro', `Erro ao buscar medicamentos: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar medicamentos:', error);
+      Alert.alert('Erro', 'Não foi possível carregar os medicamentos.');
+    }
+  };
+
+  // Lê os dados do AsyncStorage ao entrar na tela
+  useFocusEffect(
+    React.useCallback(() => {
+      const getTokenAndProfileId = async () => {
+        const storedToken = await AsyncStorage.getItem('token');
+        const storedProfileId = await AsyncStorage.getItem('profileId');
+        if (storedToken && storedProfileId) {
+          setToken(storedToken);
+          setProfileId(storedProfileId);
+        }
+      };
+
+      // Se os parâmetros da navegação estiverem disponíveis, use-os
+      if (route.params) {
+        const { token, profileId } = route.params;
+        setToken(token);
+        setProfileId(profileId);
+      } else {
+        // Se não, busca do AsyncStorage
+        getTokenAndProfileId();
+      }
+    }, [route.params])
+  );
+
+  // Carrega os medicamentos assim que token e profileId são encontrados
+  useEffect(() => {
+    if (token && profileId) {
+      fetchMedications();
+    }
+  }, [token, profileId]);
 
   const handleDelete = (id) => {
-    // Filtra os medicamentos para remover o medicamento com o id 
     setMedications(prevMedications => prevMedications.filter(med => med.id !== id));
     setModalVisible(false); 
   };
@@ -49,35 +84,38 @@ const HomeScreen = ({ navigation }) => {
       </View>
 
       <ScrollView contentContainerStyle={stylehome.scrollContent}>
-        {medications.map((medication) => (
-          <Card key={medication.id} onPress={() => {
-            setSelectedMedication(medication);
-            setModalVisible(true);
-          }}>
-            <View style={stylehome.cardContent}>
-              <Image
-                source={require('../../assets/icons/capsula.png')}
-                style={stylehome.cardImage}
-              />
-              <View style={stylehome.cardTextContainer}>
-                <Text style={stylehome.cardTitle}>{medication.name}</Text>
-                <Text style={stylehome.cardDescription}>
-                  {medication.description}
-                </Text>
+        {medications.length > 0 ? (
+          medications.map((medication) => (
+            <Card key={medication.id} onPress={() => {
+              setSelectedMedication(medication);
+              setModalVisible(true);
+            }}>
+              <View style={stylehome.cardContent}>
+                <Image
+                  source={require('../../assets/icons/capsula.png')}
+                  style={stylehome.cardImage}
+                />
+                <View style={stylehome.cardTextContainer}>
+                  <Text style={stylehome.cardTitle}>{medication.nome || 'Nome não disponível'}</Text>
+                  <Text style={stylehome.cardDescription}>
+                    {medication.descricao || 'Descrição não disponível'}
+                  </Text>
+                </View>
               </View>
-            </View>
-
-            <Text style={stylehome.cardDetails}>
-              • Restam <Text style={stylehome.highlight}>{medication.details.split('• Restam ')[1].split('.')[0]}</Text>.
-            </Text>
-            <Text style={stylehome.cardDetails}>
-              • Comprar novamente em <Text style={stylehome.highlight}>{medication.details.split('Comprar novamente em ')[1].split('.')[0]}</Text>.
-            </Text>
-          </Card>
-        ))}
+              <Text style={stylehome.cardDetails}>
+                • Dosagem: <Text style={stylehome.highlight}>{medication.dosagem || 'Não disponível'}</Text>
+              </Text>
+              <Text style={stylehome.cardDetails}>
+                • Quantidade disponível: <Text style={stylehome.highlight}>{medication.quantidade || '0'}</Text>
+              </Text>
+            </Card>
+          ))
+        ) : (
+          <Text style={stylehome.emptyListText}>Nenhum medicamento encontrado.</Text>
+        )}
       </ScrollView>
 
-      <FooterNavigation />
+      <FooterNavigation token={token} profileId={profileId} />
 
       {selectedMedication && (
         <ModalComponent

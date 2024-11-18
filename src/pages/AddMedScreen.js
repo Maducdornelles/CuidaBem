@@ -1,15 +1,59 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, Switch } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, StyleSheet, Switch, Alert } from 'react-native';
 import { Feather } from 'react-native-vector-icons';
 import InputComponent from '../components/InputComponent';
 import TransparentButton from '../components/TransparentButton';
 import FooterNavigation from '../components/FooterNavigation';
 import styles from '../style/styleaddmed';
 
-const AddMedScreen = ({ navigation }) => {
+const AddMedScreen = ({ route, navigation }) => {
+  const { token, userId } = route.params;
   const [alarmEnabled, setAlarmEnabled] = useState(false);
   const [openTypeModal, setOpenTypeModal] = useState(false);
   const [selectedType, setSelectedType] = useState('');
+  const [nome, setNome] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [quantidade, setQuantidade] = useState('');
+  const [dosagem, setDosagem] = useState('');
+
+  const handleAddMedication = async () => {
+    if (!nome || !descricao || !quantidade || !selectedType || !dosagem) {
+      Alert.alert('Erro', 'Por favor, preencha todos os campos.');
+      return;
+    }
+  
+    const medicationData = {
+      nome,
+      dosagem,
+      tipo: selectedType,
+      quantidade: parseInt(quantidade),
+      descricao,
+    };
+  
+    try {
+      const response = await fetch('http://192.168.220.233:8080/medicamento/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Active-Profile': userId, // Passando o ID do perfil
+        },
+        body: JSON.stringify(medicationData),
+      });
+  
+      if (response.ok) {
+        Alert.alert('Sucesso', 'Medicamento cadastrado com sucesso!');
+        // Realiza o redirecionamento para a Home com um trigger para recarregar a lista
+        navigation.navigate('Home', { token, userId, refresh: true });
+      } else {
+        const errorMessage = await response.text();
+        Alert.alert('Erro', `Erro ao cadastrar medicamento: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error('Erro ao cadastrar medicamento:', error);
+      Alert.alert('Erro', 'Não foi possível cadastrar o medicamento.');
+    }
+  };  
 
   const renderModalContent = (type) => (
     <View style={modalStyles.modalCard}>
@@ -18,36 +62,13 @@ const AddMedScreen = ({ navigation }) => {
       </Text>
       {type === 'type' ? (
         <>
-          <TouchableOpacity onPress={() => { setSelectedType('Comprimido'); setOpenTypeModal(false); }}>
+          <TouchableOpacity onPress={() => { setSelectedType('Comprimido'); setOpenTypeModal(false); }} >
             <Text style={modalStyles.modalOption}>Comprimido</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Cápsula'); setOpenTypeModal(false); }}>
+          <TouchableOpacity onPress={() => { setSelectedType('Cápsula'); setOpenTypeModal(false); }} >
             <Text style={modalStyles.modalOption}>Cápsula</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Colírio'); setOpenTypeModal(false); }}>
-            <Text style={modalStyles.modalOption}>Colírio</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Solução Tópica'); setOpenTypeModal(false); }}>
-            <Text style={modalStyles.modalOption}>Solução tópica</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Solução Injetável'); setOpenTypeModal(false); }}>
-            <Text style={modalStyles.modalOption}>Solução injetável</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Pastilha'); setOpenTypeModal(false); }}>
-            <Text style={modalStyles.modalOption}>Pastilha</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Pomada'); setOpenTypeModal(false); }}>
-            <Text style={modalStyles.modalOption}>Pomada</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Creme'); setOpenTypeModal(false); }}>
-            <Text style={modalStyles.modalOption}>Creme</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Gel'); setOpenTypeModal(false); }}>
-            <Text style={modalStyles.modalOption}>Gel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Supositório'); setOpenTypeModal(false); }}>
-            <Text style={modalStyles.modalOption}>Supositório</Text>
-          </TouchableOpacity>
+          {/* Adicione outras opções de tipo aqui */}
         </>
       ) : null}
       <TouchableOpacity
@@ -69,11 +90,32 @@ const AddMedScreen = ({ navigation }) => {
         <Text style={styles.headerText}>Cadastro de Medicamento</Text>
       </View>
 
-      
       <View style={{ marginBottom: 10 }}>
-        <InputComponent placeholder="Nome do medicamento" style={styles.input} />
-        <InputComponent placeholder="Descrição" multiline={true} style={[styles.input, { height: 80 }]} />
-        <InputComponent placeholder="Quantidade" style={styles.input} />
+        <InputComponent
+          placeholder="Nome do medicamento"
+          style={styles.input}
+          value={nome}
+          onChangeText={setNome}
+        />
+        <InputComponent
+          placeholder="Descrição"
+          multiline={true}
+          style={[styles.input, { height: 80 }]}
+          value={descricao}
+          onChangeText={setDescricao}
+        />
+        <InputComponent
+          placeholder="Quantidade"
+          style={styles.input}
+          value={quantidade}
+          onChangeText={setQuantidade}
+        />
+        <InputComponent
+          placeholder="Dosagem"
+          style={styles.input}
+          value={dosagem}
+          onChangeText={setDosagem}
+        />
 
         <Text style={{ color: '#999', marginBottom: 5 }}>Tipo</Text>
         <TouchableOpacity
@@ -86,7 +128,6 @@ const AddMedScreen = ({ navigation }) => {
           <Feather name="chevron-down" size={20} color="#999" />
         </TouchableOpacity>
 
-        
         <TouchableOpacity
           style={styles.frequencyButton}
           onPress={() => navigation.navigate('AlarmScreen')}
@@ -100,10 +141,9 @@ const AddMedScreen = ({ navigation }) => {
           <Switch value={alarmEnabled} onValueChange={(value) => setAlarmEnabled(value)} />
         </View>
 
-        
         <View style={[footerStyles.footer, { marginTop: 10 }]}>
           <View style={footerStyles.secondaryButtonsContainer}>
-            <TransparentButton title="Cadastrar" onPress={() => { }} />
+            <TransparentButton title="Cadastrar" onPress={handleAddMedication} />
           </View>
         </View>
       </View>

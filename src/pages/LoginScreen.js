@@ -12,24 +12,25 @@ const LoginScreen = () => {
   const [isRememberMe, setIsRememberMe] = useState(false);
   const [name, setname] = useState('');
   const [password, setPassword] = useState('');
-
+  const [loading, setLoading] = useState(false); // Para gerenciar o estado de carregamento durante o login
+  
+  // Verifica se há um token armazenado e redireciona
   useEffect(() => {
     const checkRememberMe = async () => {
       try {
-        const savedUser = await AsyncStorage.getItem('user');
-        if (savedUser) {
-          const { name, password } = JSON.parse(savedUser);
-          setname(name);
-          setPassword(password);
-          navigation.navigate('User'); 
+        const storedToken = await AsyncStorage.getItem('');
+        if (storedToken != null) {
+          console.log('Token encontrado no AsyncStorage:', storedToken);
+          // Se o token está armazenado, navegue para o perfil
+          navigation.navigate('User', { token: storedToken });
         }
       } catch (error) {
-        console.error('Erro ao buscar dados do usuário:', error);
+        console.error('Erro ao buscar dados de login:', error);
       }
     };
-
     checkRememberMe();
-  }, []);
+  }, [navigation]);
+  
 
   const toggleRememberMe = () => setIsRememberMe((prev) => !prev);
 
@@ -38,44 +39,45 @@ const LoginScreen = () => {
       Alert.alert('Erro', 'Preencha todos os campos para continuar.');
       return;
     }
-  
-    console.log('Acessando a conta...');
+    
+    setLoading(true); // Começa o carregamento
     
     try {
-      const response = await fetch('http://192.168.18.149:8080/auth/login', {
+      const response = await fetch('http://192.168.220.233:8080/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: name,  // Certifique-se de que está enviando "email" e não "name"
+          email: name,
           password: password,
         }),
       });
   
-      // Verifique se a resposta da API não está vazia
       if (response.ok) {
-        const token = await response.json(); 
-        navigation.navigate('User', { token: token }); // Passe o token para a tela de perfil
-        //console.log(token)
-        // Salvar as credenciais no AsyncStorage se "lembrar" estiver ativado
+        const data = await response.json();
+  
+        // Armazena o token no AsyncStorage
+        await AsyncStorage.setItem('token', data.token);
+
+        navigation.navigate('User', { token: data.token});
+  
         if (isRememberMe) {
           await AsyncStorage.setItem('user', JSON.stringify({ name, password }));
         } else {
           await AsyncStorage.removeItem('user');
         }
-        
-        //navigation.navigate('User');
       } else {
-        const errorData = await response.text();  // Se o corpo da resposta não for JSON, trate como texto
+        const errorData = await response.text();
         Alert.alert('Erro', errorData);
       }
     } catch (error) {
       console.error('Erro ao acessar a API:', error);
       Alert.alert('Erro', 'Ocorreu um erro ao tentar autenticar. Tente novamente.');
+    } finally {
+      setLoading(false); // Finaliza o carregamento
     }
   };
-  
 
   const handleCreateAccount = () => {
     navigation.navigate('SignUp');
@@ -86,12 +88,25 @@ const LoginScreen = () => {
     navigation.navigate('Home');
   };
 
+  const handleLogout = async () => {
+    try {
+      // Remove os dados do AsyncStorage
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('profileId');
+      await AsyncStorage.removeItem('user');
+      
+      // Redireciona para a tela de login
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Erro ao realizar logout:', error);
+      Alert.alert('Erro', 'Não foi possível realizar o logout.');
+    }
+  };
+  
+
   return (
     <View style={loginstyle.container}>
-      <Image 
-        source={require('../../assets/icons/icon.png')} 
-        style={loginstyle.icon} 
-      />
+      <Image source={require('../../assets/icons/icon.png')} style={loginstyle.icon} />
 
       <InputComponent 
         placeholder="Usuário, E-mail ou Telefone" 
@@ -117,9 +132,10 @@ const LoginScreen = () => {
       </View>
 
       <PrimaryButton 
-        title="Acessar" 
+        title={loading ? "Acessando..." : "Acessar"} 
         onPress={handleLogin} 
         textStyle={loginstyle.primaryButtonText} 
+        disabled={loading} // Desabilita o botão enquanto carrega
       />
 
       <View style={loginstyle.footer}>
