@@ -25,7 +25,7 @@ const UserScreen = ({ route }) => {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const response = await fetch('http://192.168.220.233:8080/profiles/select', {
+        const response = await fetch('http://10.1.188.98:8080/profiles/select', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ const UserScreen = ({ route }) => {
 
   const selectProfile = async (profileId) => {
     try {
-      const response = await fetch(`http://192.168.220.233:8080/profiles/select/${profileId}`, {
+      const response = await fetch(`http://10.1.188.98:8080/profiles/select/${profileId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

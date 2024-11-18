@@ -70,7 +70,7 @@ const UserSettings = ({ navigation, route }) => {
 
   const deleteUser = async () => {
     try {
-      const response = await fetch('http://192.168.220.233:8080/auth/delete', {
+      const response = await fetch('http://26.156.231.87:8080/auth/delete', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
