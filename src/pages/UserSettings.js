@@ -130,7 +130,7 @@ const UserSettings = ({ navigation, route }) => {
             <Text style={styles.buttonText}>Trocar</Text>
           </TouchableOpacity>
 
-          {/* Ícone de Logout */}
+          {/* deu certo o commit  */}
           <TouchableOpacity onPress={handleLogout} style={styles.logoutContainer}>
             <Feather name="log-out" size={24} color="#000" />
             <Text style={styles.logoutText}>Sair da Conta</Text>
