@@ -10,48 +10,71 @@ import { useNavigation } from '@react-navigation/native';
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [isRememberMe, setIsRememberMe] = useState(false);
-  const [username, setUsername] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
+  // Verifica se há um token armazenado para redirecionar o usuário automaticamente
   useEffect(() => {
     const checkRememberMe = async () => {
       try {
-        const savedUser = await AsyncStorage.getItem('user');
-        if (savedUser) {
-          const { username, password } = JSON.parse(savedUser);
-          setUsername(username);
-          setPassword(password);
-          navigation.navigate('User'); 
+        const storedToken = await AsyncStorage.getItem('token');
+        if (storedToken) {
+          console.log('Token encontrado no AsyncStorage:', storedToken);
+          navigation.navigate('User', { token: storedToken });
         }
       } catch (error) {
-        console.error('Erro ao buscar dados do usuário:', error);
+        console.error('Erro ao buscar token armazenado:', error);
       }
     };
-
     checkRememberMe();
-  }, []);
+  }, [navigation]);
 
   const toggleRememberMe = () => setIsRememberMe((prev) => !prev);
 
   const handleLogin = async () => {
-    if (username.trim() === '' || password.trim() === '') {
+    if (name.trim() === '' || password.trim() === '') {
       Alert.alert('Erro', 'Preencha todos os campos para continuar.');
       return;
     }
 
-    console.log('Acessando a conta...');
-    
-    if (isRememberMe) {
-      try {
-        await AsyncStorage.setItem('user', JSON.stringify({ username, password }));
-      } catch (error) {
-        console.error('Erro ao salvar dados do usuário:', error);
-      }
-    } else {
-      await AsyncStorage.removeItem('user'); 
-    }
+    setLoading(true);
+    try {
+      const response = await fetch('http://10.1.188.98:8080/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: name,
+          password,
+        }),
+      });
 
-    navigation.navigate('User');
+      if (response.ok) {
+        const data = await response.json();
+
+        // Armazena o token no AsyncStorage
+        await AsyncStorage.setItem('token', data.token);
+
+        // Lógica de "Manter-me conectado"
+        if (isRememberMe) {
+          await AsyncStorage.setItem('user', JSON.stringify({ name, password }));
+        } else {
+          await AsyncStorage.removeItem('user');
+        }
+
+        navigation.navigate('User', { token: data.token });
+      } else {
+        const errorData = await response.text();
+        Alert.alert('Erro', errorData);
+      }
+    } catch (error) {
+      console.error('Erro ao acessar a API:', error);
+      Alert.alert('Erro', 'Ocorreu um erro ao tentar autenticar. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCreateAccount = () => {
@@ -65,51 +88,49 @@ const LoginScreen = () => {
 
   return (
     <View style={loginstyle.container}>
-      <Image 
-        source={require('../../assets/icons/icon.png')} 
-        style={loginstyle.icon} 
-      />
+      <Image source={require('../../assets/icons/icon.png')} style={loginstyle.icon} />
 
-      <InputComponent 
-        placeholder="Usuário, E-mail ou Telefone" 
-        value={username} 
-        onChangeText={setUsername} 
-        style={{ width: 312, height: 47, marginBottom: 15 }} 
+      <InputComponent
+        placeholder="Usuário, E-mail ou Telefone"
+        value={name}
+        onChangeText={setName}
+        style={{ width: 312, height: 47, marginBottom: 15 }}
       />
-      <InputComponent 
-        placeholder="Senha" 
-        secureTextEntry={true} 
-        value={password} 
-        onChangeText={setPassword} 
-        style={{ width: 312, height: 47, marginBottom: 9 }} 
+      <InputComponent
+        placeholder="Senha"
+        secureTextEntry={true}
+        value={password}
+        onChangeText={setPassword}
+        style={{ width: 312, height: 47, marginBottom: 9 }}
       />
 
       <View style={loginstyle.switchContainer}>
-        <Switch 
+        <Switch
           value={isRememberMe}
           onValueChange={toggleRememberMe}
-          style={{ marginRight: 10 }} 
+          style={{ marginRight: 10 }}
         />
         <Text style={loginstyle.switchLabelText}>Manter-me conectado</Text>
       </View>
 
-      <PrimaryButton 
-        title="Acessar" 
-        onPress={handleLogin} 
-        textStyle={loginstyle.primaryButtonText} 
+      <PrimaryButton
+        title={loading ? 'Acessando...' : 'Acessar'}
+        onPress={handleLogin}
+        textStyle={loginstyle.primaryButtonText}
+        disabled={loading}
       />
 
       <View style={loginstyle.footer}>
         <View style={loginstyle.secondaryButtonsContainer}>
-          <SecondaryButton 
-            title="Criar conta" 
-            onPress={handleCreateAccount} 
-            textStyle={loginstyle.secondaryButtonText} 
+          <SecondaryButton
+            title="Criar conta"
+            onPress={handleCreateAccount}
+            textStyle={loginstyle.secondaryButtonText}
           />
-          <SecondaryButton 
-            title="Entrar sem cadastro" 
-            onPress={handleGuestAccess} 
-            textStyle={loginstyle.secondaryButtonText} 
+          <SecondaryButton
+            title="Entrar sem cadastro"
+            onPress={handleGuestAccess}
+            textStyle={loginstyle.secondaryButtonText}
           />
         </View>
       </View>

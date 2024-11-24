@@ -81,6 +81,21 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 50, 
   },
+  logoutContainer: {
+    position: 'absolute',
+    flexDirection: 'row',
+    alignItems: 'center',
+    right: 20, // Distância da borda direita
+    bottom: 15, // Distância da borda inferior
+    backgroundColor: 'transparent', // Fundo transparente
+  },
+  logoutText: {
+    color: '#000',
+    fontSize: 12,
+    marginLeft: 5, // Espaço entre o ícone e o texto
+    fontWeight: 'bold',
+  },
+  
 });
 
 export default styles;

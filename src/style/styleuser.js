@@ -95,94 +95,34 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   addButton: {
-    width: 220,
-    height: 66,
+    width: 200,
+    height: 57,
     backgroundColor: '#62A4B0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    marginVertical: 10,
+    marginBottom: 10, // Distância de 10px entre os botões
+  },
+  addButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+  },
+  editProfileButton: {
+    width: 200, // Mesmo tamanho para consistência
+    height: 57, // Mesmo tamanho para consistência
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#62A4B0',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
     marginVertical: 10,
     marginBottom: 100,
   },
-  addButtonText: {
-    color: '#FFFFFF',
+  editProfileButtonText: {
+    color: '#62A4B0',
     fontSize: 18,
-  },
-
-  // Modal Styles
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: '#BDBDBD',
-    borderRadius: 50,
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  textInput: {
-    width: '100%',
-    height: 40,
-    borderColor: '#62A4B0',
-    borderWidth: 1,
-    borderRadius: 25,
-    marginBottom: 10,
-    paddingLeft: 10,
-  },
-  medicationLabel: {
-    fontWeight: 'bold',
-    marginTop: 10,
-  },
-  saveButton: {
-    width: '100%',
-    height: 45,
-    backgroundColor: '#62A4B0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 25,
-    marginTop: 20,
-  },
-  saveButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-  },
-  cancelButton: {
-    width: '100%',
-    height: 45,
-    backgroundColor: '#BDBDBD',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 25,
-    marginTop: 10,
-  },
-  cancelButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
   },
 });
 

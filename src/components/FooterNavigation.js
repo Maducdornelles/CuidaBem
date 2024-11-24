@@ -1,29 +1,52 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Feather, AntDesign } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FooterNavigation = () => {
   const navigation = useNavigation();
+  const [token, setToken] = useState(null);
+  const [profileId, setProfileId] = useState(null);
+
+  // Função para pegar os dados do AsyncStorage
+  const getTokenAndProfileId = async () => {
+    const storedToken = await AsyncStorage.getItem('token');
+    const storedProfileId = await AsyncStorage.getItem('profileId');
+    setToken(storedToken);
+    setProfileId(storedProfileId);
+  };
+
+  useEffect(() => {
+    getTokenAndProfileId(); // Carrega os dados do AsyncStorage ao montar o componente
+  }, []);
+
+  const handleNavigation = async () => {
+    if (token && profileId) {
+      navigation.navigate('Home', { token, profileId });
+    } else {
+      console.error("Token ou profileId não encontrados.");
+      console.log(token, profileId)
+    }
+  };
 
   return (
     <View style={styles.footer}>
-      <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+      <TouchableOpacity onPress={handleNavigation}>
         <Feather name="home" size={24} color="white" />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Map')}>
         <Feather name="map-pin" size={24} color="white" />
       </TouchableOpacity>
-      <TouchableOpacity 
-        style={styles.addButton} 
-        onPress={() => navigation.navigate('AddMedScreen')}
-      >
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate('AddMedScreen', { token, profileId })}>
         <AntDesign name="plus" size={36} color="white" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('User')}>
+      <TouchableOpacity onPress={() => navigation.navigate('User', { token, profileId })}>
         <Feather name="user" size={24} color="white" />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate('Setting')}>
+      <TouchableOpacity onPress={() => navigation.navigate('Setting', { token, profileId })}>
         <Feather name="settings" size={24} color="white" />
       </TouchableOpacity>
     </View>

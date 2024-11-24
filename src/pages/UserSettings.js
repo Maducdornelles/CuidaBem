@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,16 +11,20 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { AntDesign, Feather, FontAwesome } from '@expo/vector-icons'; 
-import InputComponent from '../components/InputComponent'; 
-import styles from '../style/styleusersettings'; 
+import { AntDesign, Feather, FontAwesome } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import InputComponent from '../components/InputComponent';
+import styles from '../style/styleusersettings';
 
-const UserSettings = ({ navigation }) => { 
+const UserSettings = ({ navigation, route }) => {
+  const { token, profileId } = route.params;
+
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [image, setImage] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false); 
+  const [modalVisible, setModalVisible] = useState(false);
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -29,7 +33,7 @@ const UserSettings = ({ navigation }) => {
       return;
     }
 
-    setModalVisible(true); 
+    setModalVisible(true);
   };
 
   const launchGallery = async () => {
@@ -62,8 +66,22 @@ const UserSettings = ({ navigation }) => {
     if (!result.cancelled) {
       setImage(result.uri);
     }
-    setModalVisible(false); 
+    setModalVisible(false);
   };
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('profileId');
+      Alert.alert('Logout', 'Você foi desconectado com sucesso.');
+      navigation.navigate('Login'); // Redireciona para a tela de login
+    } catch (error) {
+      console.error('Erro ao realizar logout:', error);
+      Alert.alert('Erro', 'Não foi possível realizar o logout.');
+    }
+  };
+
+  useEffect(() => {}, [token, profileId]);
 
   return (
     <KeyboardAvoidingView
@@ -83,12 +101,12 @@ const UserSettings = ({ navigation }) => {
             {image ? (
               <Image source={{ uri: image }} style={styles.imagePreview} />
             ) : (
-              <FontAwesome name="camera" size={60} color="#60A2AE" /> 
+              <FontAwesome name="camera" size={60} color="#60A2AE" />
             )}
           </TouchableOpacity>
 
           <Text style={styles.label}>Email</Text>
-          <InputComponent placeholder="Digite seu email" keyboardType="email-address" width={290} /> 
+          <InputComponent placeholder="Digite seu email" keyboardType="email-address" width={290} />
           <TouchableOpacity style={styles.changeButton}>
             <Text style={styles.buttonText}>Trocar</Text>
           </TouchableOpacity>
@@ -111,12 +129,17 @@ const UserSettings = ({ navigation }) => {
           <TouchableOpacity style={styles.changeButton}>
             <Text style={styles.buttonText}>Trocar</Text>
           </TouchableOpacity>
+
+          {/* Ícone de Logout */}
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutContainer}>
+            <Feather name="log-out" size={24} color="#000" />
+            <Text style={styles.logoutText}>Sair da Conta</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
 
       <View style={styles.bottomBar}></View>
 
-     
       <Modal
         animationType="slide"
         transparent={true}
@@ -143,13 +166,12 @@ const UserSettings = ({ navigation }) => {
   );
 };
 
-
 const modalStyles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', 
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     width: '80%',
