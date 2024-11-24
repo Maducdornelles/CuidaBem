@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
   logoutText: {
     color: '#000', // Cor do texto em preto
     fontSize: 20,
-    marginLeft: 10, // Espaço entre o ícone e o texto
+    marginLeft: 10, // Deu certo tudoooooo 
   },
 });
 
