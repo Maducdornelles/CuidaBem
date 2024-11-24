@@ -17,7 +17,7 @@ const HomeScreen = ({ navigation, route }) => {
   // Função para buscar os medicamentos da API
   const fetchMedications = async () => {
     try {
-      const response = await fetch('http://10.1.188.98::8080/medicamento/list', {
+      const response = await fetch('http://26.156.231.87:8080/medicamento/list', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

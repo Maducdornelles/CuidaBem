@@ -31,7 +31,7 @@ const AddMedScreen = ({ route, navigation }) => {
     };
   
     try {
-      const response = await fetch('http://10.1.188.98:8080/medicamento/create', {
+      const response = await fetch('http://192.168.220.233:8080/medicamento/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

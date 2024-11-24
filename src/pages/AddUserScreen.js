@@ -16,13 +16,12 @@ import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import InputComponent from '../components/InputComponent';
 import styles from '../style/styleadduser';
 
-const AddUserScreen = ({ route, navigation }) => {
+const AddUserScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [imageModalVisible, setImageModalVisible] = useState(false);
-
-  const { token } = route.params || {}; // Recebe o token da rota anterior.
+  const [profileModalVisible, setProfileModalVisible] = useState(false);
 
   const pickImage = async () => {
     try {
@@ -77,38 +76,12 @@ const AddUserScreen = ({ route, navigation }) => {
     }
   };
 
-  const saveProfile = async () => {
+  const saveProfile = () => {
     if (username.trim() === '' || bio.trim() === '') {
       Alert.alert('Campos obrigatórios', 'Por favor, preencha o nome de usuário e a bio.');
       return;
     }
-
-    try {
-      const response = await fetch('http://10.1.188.98:8080/profiles/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          name: username,
-          bio: bio,
-          image: image, // Pode ser convertido para base64 se necessário.
-        }),
-      });
-
-      if (response.ok) {
-        Alert.alert('Sucesso', 'Perfil adicionado com sucesso!');
-        navigation.goBack(); // Voltar para a tela anterior após salvar.
-      } else {
-        const errorMessage = await response.text();
-        console.error('Erro ao adicionar perfil:', errorMessage);
-        Alert.alert('Erro', `Erro ao adicionar perfil: ${errorMessage}`);
-      }
-    } catch (error) {
-      console.error('Erro ao salvar perfil:', error);
-      Alert.alert('Erro', 'Não foi possível salvar o perfil.');
-    }
+    setProfileModalVisible(true);
   };
 
   return (
@@ -162,7 +135,7 @@ const AddUserScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Modal para selecionar imagem */}
+       
         <Modal visible={imageModalVisible} transparent>
           <TouchableWithoutFeedback onPress={() => setImageModalVisible(false)}>
             <View style={styles.modalContainer}>
@@ -174,6 +147,17 @@ const AddUserScreen = ({ route, navigation }) => {
                 <TouchableOpacity onPress={launchCamera} style={styles.modalButton}>
                   <Text style={styles.modalButtonText}>Tirar foto</Text>
                 </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+
+       
+        <Modal visible={profileModalVisible} transparent>
+          <TouchableWithoutFeedback onPress={() => setProfileModalVisible(false)}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Perfil atualizado!</Text>
               </View>
             </View>
           </TouchableWithoutFeedback>
