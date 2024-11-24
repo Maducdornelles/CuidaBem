@@ -69,6 +69,28 @@ const UserSettings = ({ navigation, route }) => {
     setModalVisible(false);
   };
 
+  const deleteUser = async () => {
+    try {
+      const response = await fetch('http://192.168.18.149:8080/auth/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Passando o token no header
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao deletar usuário');
+      }
+
+      const result = await response.json();
+      Alert.alert('Sucesso', 'Usuário deletado com sucesso.');
+      navigation.navigate('Login'); // Redireciona para a tela de login após excluir o usuário
+    } catch (error) {
+      Alert.alert('Erro', error.message);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('token');
@@ -130,14 +152,20 @@ const UserSettings = ({ navigation, route }) => {
             <Text style={styles.buttonText}>Trocar</Text>
           </TouchableOpacity>
 
-          {/* deu certo o commit  */}
-          <TouchableOpacity onPress={handleLogout} style={styles.logoutContainer}>
-            <Feather name="log-out" size={24} color="#000" />
-            <Text style={styles.logoutText}>Sair da Conta</Text>
+          {/* Botão de Deletar Conta abaixo do Trocar */}
+          <TouchableOpacity onPress={deleteUser} style={styles.deleteContainer}>
+            <Feather name="delete" size={24} color="#000" />
+            <Text style={styles.deleteText}>Deletar Conta</Text>
           </TouchableOpacity>
         </View>
+        
+        {/* Botão de Logout fora do card */}
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutContainer}>
+          <Feather name="log-out" size={54} color="#000" />
+          <Text style={styles.logoutText}>Sair da Conta</Text>
+        </TouchableOpacity>
       </ScrollView>
-         
+
       <View style={styles.bottomBar}></View>
 
       <Modal

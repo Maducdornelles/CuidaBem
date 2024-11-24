@@ -9,9 +9,20 @@ export default StyleSheet.create({
   map: {
     ...StyleSheet.absoluteFillObject,
   },
+  header: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 10,
+    backgroundColor: '#fff',
+    borderRadius: 50,
+    padding: 5,
+    elevation: 5,
+    marginTop:30,
+  },
   searchContainer: {
     position: 'absolute',
-    top: 60, // Ajuste para 30px mais para baixo
+    top: 60,
     width: width - 40,
     height: 54,
     alignSelf: 'center',
@@ -25,6 +36,7 @@ export default StyleSheet.create({
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 3 },
     shadowRadius: 5,
+    marginTop: 40,
   },
   searchInput: {
     flex: 1,
@@ -33,6 +45,7 @@ export default StyleSheet.create({
     fontSize: 16,
     fontFamily: 'System',
   },
+ 
   pharmacyInfo: {
     position: 'absolute',
     bottom: 50,

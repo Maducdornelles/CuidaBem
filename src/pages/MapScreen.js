@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { Ionicons, Feather } from '@expo/vector-icons';
+import { Ionicons, Feather } from 'react-native-vector-icons';
 import styles from '../style/stylemap';
 
 const MapScreen = ({ navigation }) => {
@@ -31,7 +31,6 @@ const MapScreen = ({ navigation }) => {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
     })();
@@ -54,8 +53,19 @@ const MapScreen = ({ navigation }) => {
     }
   };
 
+  const resetMap = () => {
+    setSelectedPharmacy(null);
+    setSearch('');
+  };
+
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Feather name="arrow-left-circle" size={30} color="#62A4B0" />
+        </TouchableOpacity>
+      </View>
+
       <MapView
         style={styles.map}
         initialRegion={{
@@ -100,7 +110,7 @@ const MapScreen = ({ navigation }) => {
       </MapView>
 
       <View style={styles.searchContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={resetMap}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
         <TextInput

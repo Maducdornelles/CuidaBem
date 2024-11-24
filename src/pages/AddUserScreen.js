@@ -15,13 +15,16 @@ import * as ImagePicker from 'expo-image-picker';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import InputComponent from '../components/InputComponent';
 import styles from '../style/styleadduser';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddUserScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
-  const [username, setUsername] = useState('');
+  const [name, setname] = useState('');
   const [bio, setBio] = useState('');
   const [imageModalVisible, setImageModalVisible] = useState(false);
   const [profileModalVisible, setProfileModalVisible] = useState(false);
+  const [token, setToken] = useState(null);
+  const [profileId, setProfileId] = useState(null);
 
   const pickImage = async () => {
     try {
@@ -76,13 +79,40 @@ const AddUserScreen = ({ navigation }) => {
     }
   };
 
-  const saveProfile = () => {
-    if (username.trim() === '' || bio.trim() === '') {
+  const saveProfile = async () => {
+    if (name.trim() === '' || bio.trim() === '') {
       Alert.alert('Campos obrigatórios', 'Por favor, preencha o nome de usuário e a bio.');
       return;
     }
-    setProfileModalVisible(true);
-  };
+  
+    try {
+      const token = await AsyncStorage.getItem('token'); // Recupera o token do armazenamento
+      const response = await fetch('http://192.168.18.149:8080/profiles/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Envia o token para autenticação
+        },
+        body: JSON.stringify({
+          name,
+          bio,
+          image,
+        }),
+      });
+  
+      if (response.ok) {
+        Alert.alert('Sucesso', 'Usuário adicionado com sucesso!');
+        navigation.navigate('User', { refresh: true, token, profileId }); // Redireciona e força atualização
+      } else {
+        const error = await response.json();
+        Alert.alert('Erro', error.message || 'Falha ao adicionar usuário.');
+      }
+    } catch (error) {
+      console.error('Erro ao salvar o perfil:', error);
+      Alert.alert('Erro', 'Ocorreu um erro ao adicionar o usuário.');
+    }
+  };  
+  
 
   return (
     <KeyboardAvoidingView
@@ -107,8 +137,8 @@ const AddUserScreen = ({ navigation }) => {
           </TouchableOpacity>
 
           <InputComponent
-            value={username}
-            onChangeText={setUsername}
+            value={name}
+            onChangeText={setname}
             placeholder="Nome de usuário"
             width={300}
             height={47}

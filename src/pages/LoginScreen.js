@@ -43,7 +43,7 @@ const LoginScreen = () => {
     setLoading(true); // Começa o carregamento
     
     try {
-      const response = await fetch('http://10.1.188.98:8080/auth/login', {
+      const response = await fetch('http://192.168.18.149:8080/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

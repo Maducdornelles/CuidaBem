@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 10,
-    marginTop: 30, 
+    marginTop: 30,
   },
   headerText: {
     flex: 1,
@@ -20,13 +20,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
     textAlign: 'center',
-    fontFamily: 'System', 
+    fontFamily: 'System',
   },
   card: {
-    width: 316, 
+    width: 316,
     backgroundColor: '#F3F3F3',
     alignSelf: 'center',
-    marginTop: 80, 
+    marginTop: 80,
     borderRadius: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -49,13 +49,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
     color: '#000',
-    fontFamily: 'System', 
+    fontFamily: 'System',
   },
   changeButton: {
     width: 136,
     height: 41,
     backgroundColor: '#62A4B0',
-    borderRadius: 10, 
+    borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 10,
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
-    fontFamily: 'System', 
+    fontFamily: 'System',
   },
   passwordContainer: {
     flexDirection: 'row',
@@ -79,23 +79,24 @@ const styles = StyleSheet.create({
     height: 57,
     backgroundColor: '#afd0d6',
     position: 'absolute',
-    bottom: 50, 
+    bottom: 0,  // Fixa a barra no final da tela
   },
   logoutContainer: {
     position: 'absolute',
     flexDirection: 'row',
     alignItems: 'center',
-    right: 30, // Distância da borda direita
-    bottom: 15, // Distância da borda inferior
+    left: 30, // Alinha o botão à esquerda
+    bottom: 70, // Distância da parte inferior (ajustado para visibilidade)
     backgroundColor: 'transparent', // Fundo transparente
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
   },
   logoutText: {
-    color: '#000',
-    fontSize: 13,
-    marginLeft: 5, // Espaço entre o ícone e o texto
-    
+    color: '#000', // Cor do texto em preto
+    fontSize: 20,
+    marginLeft: 10, // Espaço entre o ícone e o texto
   },
-  
 });
 
 export default styles;
