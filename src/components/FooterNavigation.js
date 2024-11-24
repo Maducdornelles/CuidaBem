@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Feather, AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -30,21 +30,6 @@ const FooterNavigation = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      // Limpar os dados do AsyncStorage
-      await AsyncStorage.removeItem('token');
-      await AsyncStorage.removeItem('profileId');
-      Alert.alert('Logout', 'Você foi desconectado com sucesso.');
-      
-      // Redirecionar para a tela de login
-      navigation.navigate('Login');
-    } catch (error) {
-      console.error('Erro ao realizar logout:', error);
-      Alert.alert('Erro', 'Não foi possível realizar o logout.');
-    }
-  };
-
   return (
     <View style={styles.footer}>
       <TouchableOpacity onPress={handleNavigation}>
@@ -63,9 +48,6 @@ const FooterNavigation = () => {
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate('Setting', { token, profileId })}>
         <Feather name="settings" size={24} color="white" />
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleLogout}>
-        <Feather name="log-out" size={24} color="white" />
       </TouchableOpacity>
     </View>
   );

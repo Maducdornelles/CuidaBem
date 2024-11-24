@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { AntDesign, Feather, FontAwesome } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import InputComponent from '../components/InputComponent';
 import styles from '../style/styleusersettings';
 
@@ -68,25 +69,15 @@ const UserSettings = ({ navigation, route }) => {
     setModalVisible(false);
   };
 
-  const deleteUser = async () => {
+  const handleLogout = async () => {
     try {
-      const response = await fetch('http://26.156.231.87:8080/auth/delete', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, // Passando o token no header
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Erro ao deletar usuário');
-      }
-
-      const result = await response.json();
-      Alert.alert('Sucesso', 'Usuário deletado com sucesso.');
-      navigation.navigate('Login'); // Redireciona para a tela de login após excluir o usuário
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('profileId');
+      Alert.alert('Logout', 'Você foi desconectado com sucesso.');
+      navigation.navigate('Login'); // Redireciona para a tela de login
     } catch (error) {
-      Alert.alert('Erro', error.message);
+      console.error('Erro ao realizar logout:', error);
+      Alert.alert('Erro', 'Não foi possível realizar o logout.');
     }
   };
 
@@ -127,7 +118,10 @@ const UserSettings = ({ navigation, route }) => {
               secureTextEntry={!passwordVisible}
               width={290}
             />
-            <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)} style={styles.eyeIcon}>
+            <TouchableOpacity
+              onPress={() => setPasswordVisible(!passwordVisible)}
+              style={styles.eyeIcon}
+            >
               <Feather name={passwordVisible ? 'eye' : 'eye-off'} size={24} color="#000" />
             </TouchableOpacity>
           </View>
@@ -136,13 +130,14 @@ const UserSettings = ({ navigation, route }) => {
             <Text style={styles.buttonText}>Trocar</Text>
           </TouchableOpacity>
 
-          {/* Botão de Deletar Usuário */}
-          <TouchableOpacity onPress={deleteUser} style={styles.deleteButton}>
-            <Text style={styles.buttonText}>Deletar Conta</Text>
+          {/* Ícone de Logout */}
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutContainer}>
+            <Feather name="log-out" size={24} color="#000" />
+            <Text style={styles.logoutText}>Sair da Conta</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
-
+         
       <View style={styles.bottomBar}></View>
 
       <Modal
@@ -202,13 +197,6 @@ const modalStyles = StyleSheet.create({
   modalButtonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
-  },
-  deleteButton: {
-    backgroundColor: 'red',
-    padding: 15,
-    borderRadius: 5,
-    marginTop: 20,
-    alignItems: 'center',
   },
 });
 

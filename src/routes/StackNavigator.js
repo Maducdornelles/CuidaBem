@@ -12,6 +12,7 @@ import AddMedScreen from '../pages/AddMedScreen';
 import MapScreen from '../pages/MapScreen';
 import NotificationScreen from '../pages/NotificationScreen';
 import AlarmScreen from '../pages/AlarmScreen';
+import EditProfileScreen from '../pages/EditProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Map" component={MapScreen} />
       <Stack.Screen name="Notification" component={NotificationScreen} />
       <Stack.Screen name="AlarmScreen" component={AlarmScreen} />
+      <Stack.Screen name='EditProfileScreen' component={EditProfileScreen} /> 
     </Stack.Navigator>
   );
 };

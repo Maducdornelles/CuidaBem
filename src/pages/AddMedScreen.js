@@ -1,225 +1,186 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, StyleSheet, Switch, Alert } from 'react-native';
-import { Feather } from 'react-native-vector-icons';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Modal,
+  TouchableWithoutFeedback,
+  Alert,
+} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import InputComponent from '../components/InputComponent';
-import TransparentButton from '../components/TransparentButton';
-import FooterNavigation from '../components/FooterNavigation';
-import styles from '../style/styleaddmed';
+import styles from '../style/styleadduser';
 
-const AddMedScreen = ({ route, navigation }) => {
-  const { token, userId } = route.params;
-  const [alarmEnabled, setAlarmEnabled] = useState(false);
-  const [openTypeModal, setOpenTypeModal] = useState(false);
-  const [selectedType, setSelectedType] = useState('');
-  const [nome, setNome] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [quantidade, setQuantidade] = useState('');
-  const [dosagem, setDosagem] = useState('');
+const AddUserScreen = ({ route, navigation }) => {
+  const [image, setImage] = useState(null);
+  const [username, setUsername] = useState('');
+  const [bio, setBio] = useState('');
+  const [imageModalVisible, setImageModalVisible] = useState(false);
 
-  const handleAddMedication = async () => {
-    if (!nome || !descricao || !quantidade || !selectedType || !dosagem) {
-      Alert.alert('Erro', 'Por favor, preencha todos os campos.');
+  const { token } = route.params || {}; // Recebe o token da rota anterior.
+
+  const pickImage = async () => {
+    try {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permissão negada', 'Precisamos da permissão para acessar a galeria.');
+        return;
+      }
+      setImageModalVisible(true);
+    } catch (error) {
+      console.error('Erro ao solicitar permissão de galeria:', error);
+    }
+  };
+
+  const launchGallery = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.cancelled) {
+        setImage(result.uri);
+      }
+      setImageModalVisible(false);
+    } catch (error) {
+      console.error('Erro ao abrir a galeria:', error);
+    }
+  };
+
+  const launchCamera = async () => {
+    try {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permissão negada', 'Precisamos da permissão para acessar a câmera.');
+        return;
+      }
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.cancelled) {
+        setImage(result.uri);
+      }
+      setImageModalVisible(false);
+    } catch (error) {
+      console.error('Erro ao abrir a câmera:', error);
+    }
+  };
+
+  const saveProfile = async () => {
+    if (username.trim() === '' || bio.trim() === '') {
+      Alert.alert('Campos obrigatórios', 'Por favor, preencha o nome de usuário e a bio.');
       return;
     }
-  
-    const medicationData = {
-      nome,
-      dosagem,
-      tipo: selectedType,
-      quantidade: parseInt(quantidade),
-      descricao,
-    };
-  
+
     try {
-      const response = await fetch('http://192.168.220.233:8080/medicamento/create', {
+      const response = await fetch('http://10.1.188.98:8080/profiles/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          'Active-Profile': userId, // Passando o ID do perfil
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(medicationData),
+        body: JSON.stringify({
+          name: username,
+          bio: bio,
+          image: image, // Pode ser convertido para base64 se necessário.
+        }),
       });
-  
+
       if (response.ok) {
-        Alert.alert('Sucesso', 'Medicamento cadastrado com sucesso!');
-        // Realiza o redirecionamento para a Home com um trigger para recarregar a lista
-        navigation.navigate('Home', { token, userId, refresh: true });
+        Alert.alert('Sucesso', 'Perfil adicionado com sucesso!');
+        navigation.goBack(); // Voltar para a tela anterior após salvar.
       } else {
         const errorMessage = await response.text();
-        Alert.alert('Erro', `Erro ao cadastrar medicamento: ${errorMessage}`);
+        console.error('Erro ao adicionar perfil:', errorMessage);
+        Alert.alert('Erro', `Erro ao adicionar perfil: ${errorMessage}`);
       }
     } catch (error) {
-      console.error('Erro ao cadastrar medicamento:', error);
-      Alert.alert('Erro', 'Não foi possível cadastrar o medicamento.');
+      console.error('Erro ao salvar perfil:', error);
+      Alert.alert('Erro', 'Não foi possível salvar o perfil.');
     }
-  };  
-
-  const renderModalContent = (type) => (
-    <View style={modalStyles.modalCard}>
-      <Text style={modalStyles.modalTitle}>
-        {type === 'type' ? 'Escolha o Tipo' : ''}
-      </Text>
-      {type === 'type' ? (
-        <>
-          <TouchableOpacity onPress={() => { setSelectedType('Comprimido'); setOpenTypeModal(false); }} >
-            <Text style={modalStyles.modalOption}>Comprimido</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => { setSelectedType('Cápsula'); setOpenTypeModal(false); }} >
-            <Text style={modalStyles.modalOption}>Cápsula</Text>
-          </TouchableOpacity>
-          {/* Adicione outras opções de tipo aqui */}
-        </>
-      ) : null}
-      <TouchableOpacity
-        style={modalStyles.modalButton}
-        onPress={() => { setSelectedType(''); setOpenTypeModal(false); }}
-      >
-        <Text style={modalStyles.modalButtonText}>Limpar Seleção</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  };
 
   return (
-    <View style={styles.container}>
-      <View style={{ height: 30 }} />
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconContainer}>
-          <Feather name="x" size={30} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Cadastro de Medicamento</Text>
-      </View>
-
-      <View style={{ marginBottom: 10 }}>
-        <InputComponent
-          placeholder="Nome do medicamento"
-          style={styles.input}
-          value={nome}
-          onChangeText={setNome}
-        />
-        <InputComponent
-          placeholder="Descrição"
-          multiline={true}
-          style={[styles.input, { height: 80 }]}
-          value={descricao}
-          onChangeText={setDescricao}
-        />
-        <InputComponent
-          placeholder="Quantidade"
-          style={styles.input}
-          value={quantidade}
-          onChangeText={setQuantidade}
-        />
-        <InputComponent
-          placeholder="Dosagem"
-          style={styles.input}
-          value={dosagem}
-          onChangeText={setDosagem}
-        />
-
-        <Text style={{ color: '#999', marginBottom: 5 }}>Tipo</Text>
-        <TouchableOpacity
-          style={[styles.picker, { width: 312, height: 47, alignSelf: 'center' }]}
-          onPress={() => setOpenTypeModal(true)}
-        >
-          <Text style={{ color: selectedType ? '#333' : '#999' }}>
-            {selectedType || 'Selecione o Tipo'}
-          </Text>
-          <Feather name="chevron-down" size={20} color="#999" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.frequencyButton}
-          onPress={() => navigation.navigate('AlarmScreen')}
-        >
-          <Text style={styles.buttonText}>Frequência</Text>
-          <Feather name="clock" size={20} color="#fff" style={styles.frequencyIcon} />
-        </TouchableOpacity>
-
-        <View style={styles.switchContainer}>
-          <Text style={styles.switchLabel}>Habilitar Alarme</Text>
-          <Switch value={alarmEnabled} onValueChange={(value) => setAlarmEnabled(value)} />
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <AntDesign name="arrowleft" size={24} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.headerText}>Adicionar perfil</Text>
         </View>
 
-        <View style={[footerStyles.footer, { marginTop: 10 }]}>
-          <View style={footerStyles.secondaryButtonsContainer}>
-            <TransparentButton title="Cadastrar" onPress={handleAddMedication} />
-          </View>
-        </View>
-      </View>
+        <View style={styles.card}>
+          <TouchableOpacity onPress={pickImage} style={styles.cameraContainer}>
+            {image ? (
+              <Image source={{ uri: image }} style={styles.imagePreview} />
+            ) : (
+              <FontAwesome name="camera" size={60} color="#60A2AE" />
+            )}
+          </TouchableOpacity>
 
-      <FooterNavigation />
+          <InputComponent
+            value={username}
+            onChangeText={setUsername}
+            placeholder="Nome de usuário"
+            width={300}
+            height={47}
+            marginVertical={10}
+          />
 
-      <Modal
-        transparent
-        visible={openTypeModal}
-        animationType="fade"
-        onRequestClose={() => setOpenTypeModal(false)}
-      >
-        <View style={modalStyles.modalContainer}>
-          {renderModalContent('type')}
+          <InputComponent
+            value={bio}
+            onChangeText={setBio}
+            placeholder="Bio..."
+            width={300}
+            height={100}
+            marginVertical={10}
+            multiline
+            textAlignVertical="top"
+          />
+
+          <TouchableOpacity onPress={saveProfile} style={styles.addButton}>
+            <Text style={styles.buttonText}>Adicionar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.cancelButton}>
+            <Text style={styles.cancelButtonText}>Cancelar</Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
-    </View>
+
+        {/* Modal para selecionar imagem */}
+        <Modal visible={imageModalVisible} transparent>
+          <TouchableWithoutFeedback onPress={() => setImageModalVisible(false)}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Escolher uma opção</Text>
+                <TouchableOpacity onPress={launchGallery} style={styles.modalButton}>
+                  <Text style={styles.modalButtonText}>Escolher da galeria</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={launchCamera} style={styles.modalButton}>
+                  <Text style={styles.modalButtonText}>Tirar foto</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
-const footerStyles = StyleSheet.create({
-  footer: {
-    marginTop: 10,
-    width: '100%',
-    alignItems: 'center',
-  },
-  secondaryButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: 30,
-    paddingVertical: 5,
-  },
-});
-
-const modalStyles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalCard: {
-    width: 330,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    maxHeight: 400,
-    overflow: 'scroll',
-    maxHeight: 500,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-  },
-  modalOption: {
-    fontSize: 16,
-    color: '#333',
-    paddingVertical: 5,
-  },
-  modalButton: {
-    backgroundColor: '#60A2AE',
-    borderRadius: 5,
-    padding: 10,
-    marginTop: 10,
-    width: '100%',
-    alignItems: 'center',
-  },
-  modalButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
-});
-
-export default AddMedScreen;
+export default AddUserScreen;
