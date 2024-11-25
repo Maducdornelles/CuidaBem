@@ -66,7 +66,7 @@ const UserSettings = ({ navigation, route }) => {
   // Função para deletar a conta do usuário
   const deleteUser = async () => {
     try {
-      const response = await fetch('http://192.168.18.149:8080/auth/delete', {
+      const response = await fetch('https://remediario.onrender.com/auth/delete', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

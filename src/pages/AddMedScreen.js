@@ -31,7 +31,7 @@ const AddMedScreen = ({ route, navigation }) => {
     };
   
     try {
-      const response = await fetch('http://192.168.18.149:8080/medicamento/create', {
+      const response = await fetch('https://remediario.onrender.com/medicamento/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
