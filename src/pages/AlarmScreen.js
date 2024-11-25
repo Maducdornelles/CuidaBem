@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
-import * as Notifications from 'expo-notifications';
+import * as Notifications from 'expo-notifications'; // Modifique conforme sua implementação do Push Notification
 import styles from '../style/stylealarm';
 
 const AlarmScreen = () => {
@@ -13,7 +13,6 @@ const AlarmScreen = () => {
 
   const navigation = useNavigation();
 
-  
   const handleTimeChange = (event, time) => {
     setShowPicker(false);
     if (time) {
@@ -21,7 +20,6 @@ const AlarmScreen = () => {
     }
   };
 
-  
   const scheduleNotifications = (alarmTimes) => {
     alarmTimes.forEach((time, index) => {
       const trigger = new Date(time);
@@ -41,31 +39,31 @@ const AlarmScreen = () => {
     });
   };
 
-  // Função para calcular os próximos horários de alarme
   const calculateNextAlarms = () => {
     const baseTime = selectedTime;
     const nextAlarms = [];
 
+    // Calcular os próximos horários de acordo com o intervalo
     for (let i = 1; i <= 4; i++) {
       const nextTime = new Date(baseTime);
       nextTime.setHours(baseTime.getHours() + interval * i);
       nextAlarms.push(nextTime);
     }
 
-    setAlarms(nextAlarms.map((time) =>
+    // Formatando os horários para exibição
+    const formattedAlarms = nextAlarms.map((time) =>
       time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    ));
+    );
 
-    // Agendar notificações
-    scheduleNotifications(nextAlarms);
+    setAlarms(formattedAlarms);
+    scheduleNotifications(nextAlarms); // Agendar as notificações
     Alert.alert('Alarmes Agendados');
   };
 
   const handleIntervalChange = (value) => {
     setInterval(value);
-    calculateNextAlarms();
+    calculateNextAlarms(); // Recalcular os alarmes quando o intervalo for alterado
   };
-
 
   const handleBackPress = () => {
     navigation.goBack();
@@ -91,7 +89,7 @@ const AlarmScreen = () => {
         )}
 
         <View style={styles.intervals}>
-          {[1, 4, 6, 8, 12].map((value) => (
+          {[1, 3, 4, 6, 12].map((value) => (
             <TouchableOpacity
               key={value}
               style={[styles.intervalButton, interval === value && styles.selectedButton]}

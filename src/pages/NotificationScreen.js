@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch, Alert, Modal, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Switch, Modal, StyleSheet } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import styles from '../style/notificationstyle';
 
-const NotificationScreen = ({ navigation }) => {
-  const [notifications, setNotifications] = useState([
-    { time: '13:00', medication: 'Paracetamol', user: 'João', dosage: '50mg', form: 'comprimido' },
-    { time: '14:00', medication: 'Vitamina C', user: 'Julia', dosage: '10mg', form: 'comprimido' },
-    { time: '01:00', medication: 'Paracetamol', user: 'João', dosage: '50mg', form: 'comprimido' },
-  ]);
+const NotificationScreen = ({ navigation, route }) => {
+  const { alarms } = route.params || { alarms: [] }; // Garantir que 'alarms' seja um array vazio se não estiver presente
   const [isEnabled, setIsEnabled] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -16,7 +12,7 @@ const NotificationScreen = ({ navigation }) => {
   const toggleSwitch = () => setIsEnabled((prev) => !prev);
 
   const handleDelete = () => {
-    setNotifications((prev) => prev.filter((_, i) => i !== selectedIndex));
+    // Aqui você pode adicionar lógica para excluir o alarme
     setModalVisible(false);
   };
 
@@ -27,7 +23,6 @@ const NotificationScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <AntDesign name="arrowleft" size={24} color="white" />
@@ -35,22 +30,24 @@ const NotificationScreen = ({ navigation }) => {
         <Text style={styles.headerText}>Configuração de Notificações</Text>
       </View>
 
-   
       <ScrollView contentContainerStyle={styles.body}>
-        <Text style={styles.nextAlarmText}>Próximo Alarme às:</Text>
-        {notifications.map((notification, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.notificationCard}
-            onPress={() => handleOpenModal(index)}
-          >
-            <Text style={styles.cardText}>
-              {`${notification.time} - ${notification.medication} - ${notification.user}\n${notification.dosage} - ${notification.form}`}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        <Text style={styles.nextAlarmText}>Próximos Alarmes:</Text>
+        {alarms && alarms.length > 0 ? (
+          alarms.map((alarm, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.notificationCard}
+              onPress={() => handleOpenModal(index)}
+            >
+              <Text style={styles.cardText}>
+                {alarm} - Lembrete de Medicamento
+              </Text>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text style={styles.noAlarmsText}>Nenhum alarme configurado.</Text> // Exibe mensagem caso não haja alarmes
+        )}
 
-        
         <View style={styles.switchSection}>
           <Text style={styles.switchText}>Permitir Notificação</Text>
           <Switch
@@ -62,7 +59,6 @@ const NotificationScreen = ({ navigation }) => {
         </View>
       </ScrollView>
 
-     
       <Modal
         animationType="slide"
         transparent={true}
@@ -85,9 +81,7 @@ const NotificationScreen = ({ navigation }) => {
         </View>
       </Modal>
     </View>
-    
   );
-
 };
 
 const modalStyles = StyleSheet.create({
@@ -108,19 +102,18 @@ const modalStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
-    color: '#333',
   },
   modalButton: {
-    backgroundColor: '#60A2AE',
-    borderRadius: 5,
+    backgroundColor: '#62A4B0',
     padding: 10,
-    marginVertical: 5,
     width: '100%',
     alignItems: 'center',
+    marginBottom: 10,
+    borderRadius: 5,
   },
   modalButtonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
+    color: '#fff',
+    fontSize: 16,
   },
 });
 
