@@ -27,7 +27,7 @@ const UserScreen = ({ route }) => {
     React.useCallback(() => {
       const fetchProfiles = async () => {
         try {
-          const response = await fetch('http://192.168.18.149:8080/profiles/select', {
+          const response = await fetch('https://remediario.onrender.com/profiles/select', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ const UserScreen = ({ route }) => {
 
   const selectProfile = async (profileId) => {
     try {
-      const response = await fetch(`http://192.168.18.149:8080/profiles/select/${profileId}`, {
+      const response = await fetch(`https://remediario.onrender.com/profiles/select/${profileId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
