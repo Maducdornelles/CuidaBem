@@ -82,10 +82,7 @@ const LoginScreen = () => {
     navigation.navigate('SignUp');
   };
 
-  const handleGuestAccess = () => {
-    console.log('Entrar sem cadastro...');
-    navigation.navigate('Home');
-  };
+  
 
   const handleLogout = async () => {
     try {

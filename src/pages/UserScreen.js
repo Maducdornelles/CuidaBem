@@ -19,7 +19,6 @@ const UserScreen = ({ route }) => {
   const saveProfileId = async (profileId) => {
     try {
       await AsyncStorage.setItem('profileId', profileId.toString());
-      console.log(`ProfileId salvo no AsyncStorage: ${profileId}`);
     } catch (error) {
       console.error('Erro ao salvar profileId no AsyncStorage:', error);
     }
