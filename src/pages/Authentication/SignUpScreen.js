@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, Image, Switch, Text, Alert } from 'react-native';
-import InputComponent from '../components/InputComponent';
-import PrimaryButton from '../components/PrimaryButton';
-import TransparentButton from '../components/TransparentButton';
-import styles from '../style/stylesignup';
+import InputComponent from '../../components/InputComponent';
+import PrimaryButton from '../../components/PrimaryButton';
+import TransparentButton from '../../components/TransparentButton';
+import styles from '../../style/stylesignup';
+
 
 const SignUpScreen = ({ navigation }) => {
   const [isChecked, setChecked] = useState(false);
@@ -76,7 +77,7 @@ const SignUpScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image 
-        source={require('../../assets/icons/icon.png')} 
+        source={require('../../../assets/icons/icon.png')} 
         style={styles.icon} 
       />
       

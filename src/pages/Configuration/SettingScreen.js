@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Feather, AntDesign } from '@expo/vector-icons';
-import styleSettings from '../style/stylesetting';
+import styleSettings from '../../style/stylesetting';
 
 const SettingScreen = ({ navigation, route }) => {
   const { token, profileId } = route.params;

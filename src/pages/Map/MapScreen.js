@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Ionicons, Feather } from 'react-native-vector-icons';
-import styles from '../style/stylemap';
+import styles from '../../style/stylemap';
 
 const MapScreen = ({ navigation }) => {
   const [location, setLocation] = useState(null);

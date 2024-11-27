@@ -28,13 +28,22 @@ const loginstyle = StyleSheet.create({
     marginTop: 10, 
     width: '100%',
     alignItems: 'center',
+    justifyContent: 'center', 
   },
+<<<<<<< HEAD
   secondaryButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '55%',
     paddingHorizontal: 30, 
     paddingVertical: 5,   
+=======
+  TransparentButtonContainer: {
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    width: '100%', 
+    paddingVertical: 5, 
+>>>>>>> 74b946e (refactor: update styles and reorganize folder structure)
   },
 });
 

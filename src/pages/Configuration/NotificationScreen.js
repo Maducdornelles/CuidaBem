@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Switch, Modal, StyleSheet } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-import styles from '../style/notificationstyle';
+import styles from '../../style/notificationstyle';
 
 const NotificationScreen = ({ navigation, route }) => {
   const { alarms } = route.params || { alarms: [] }; // Garantir que 'alarms' seja um array vazio se não estiver presente

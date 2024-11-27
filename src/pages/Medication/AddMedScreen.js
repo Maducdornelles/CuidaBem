@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, Switch, Alert } from 'react-native';
 import { Feather } from 'react-native-vector-icons';
-import InputComponent from '../components/InputComponent';
-import TransparentButton from '../components/TransparentButton';
-import FooterNavigation from '../components/FooterNavigation';
-import styles from '../style/styleaddmed';
+import InputComponent from '../../components/InputComponent';
+import TransparentButton from '../../components/TransparentButton';
+import FooterNavigation from '../../components/FooterNavigation';
+import styles from '../../style/styleaddmed';
 
 const AddMedScreen = ({ route, navigation }) => {
   const { token, userId } = route.params;

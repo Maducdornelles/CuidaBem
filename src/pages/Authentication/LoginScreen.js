@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, Text, Switch, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import InputComponent from '../components/InputComponent';
-import PrimaryButton from '../components/PrimaryButton';
-import SecondaryButton from '../components/SecondaryButton';
-import loginstyle from '../style/stylelogin';
+import InputComponent from '../../components/InputComponent'; // Caminho corrigido
+import PrimaryButton from '../../components/PrimaryButton'; // Caminho corrigido
+import TransparentButton from '../../components/TransparentButton'; // Caminho corrigido
+import loginstyle from '../../style/stylelogin'; // Caminho corrigido
 import { useNavigation } from '@react-navigation/native';
+import icon from '../../../assets/icons/icon.png';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
   const [isRememberMe, setIsRememberMe] = useState(false);
-  const [name, setname] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false); // Para gerenciar o estado de carregamento durante o login
-  
+
   // Verifica se há um token armazenado e redireciona
   useEffect(() => {
     const checkRememberMe = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem('');
+        const storedToken = await AsyncStorage.getItem('token'); // Ajustado: chave do AsyncStorage
         if (storedToken != null) {
           navigation.navigate('User', { token: storedToken });
         }
@@ -28,7 +29,6 @@ const LoginScreen = () => {
     };
     checkRememberMe();
   }, [navigation]);
-  
 
   const toggleRememberMe = () => setIsRememberMe((prev) => !prev);
 
@@ -37,9 +37,9 @@ const LoginScreen = () => {
       Alert.alert('Erro', 'Preencha todos os campos para continuar.');
       return;
     }
-    
+
     setLoading(true); // Começa o carregamento
-    
+
     try {
       const response = await fetch('http://10.1.241.222:8080/auth/login', {
         method: 'POST',
@@ -51,16 +51,19 @@ const LoginScreen = () => {
           password: password,
         }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
-  
+
         // Armazena o token no AsyncStorage
         await AsyncStorage.setItem('token', data.token);
         await AsyncStorage.setItem('userId', data.id);
+<<<<<<< HEAD:src/pages/LoginScreen.js
+=======
 
-        navigation.navigate('User', { token: data.token});
-  
+        navigation.navigate('User', { token: data.token });
+>>>>>>> 74b946e (refactor: update styles and reorganize folder structure):src/pages/Authentication/LoginScreen.js
+
         if (isRememberMe) {
           await AsyncStorage.setItem('user', JSON.stringify({ name, password }));
         } else {
@@ -82,15 +85,18 @@ const LoginScreen = () => {
     navigation.navigate('SignUp');
   };
 
+<<<<<<< HEAD:src/pages/LoginScreen.js
   
 
+=======
+>>>>>>> 74b946e (refactor: update styles and reorganize folder structure):src/pages/Authentication/LoginScreen.js
   const handleLogout = async () => {
     try {
       // Remove os dados do AsyncStorage
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('profileId');
       await AsyncStorage.removeItem('user');
-      
+
       // Redireciona para a tela de login
       navigation.navigate('Login');
     } catch (error) {
@@ -98,16 +104,15 @@ const LoginScreen = () => {
       Alert.alert('Erro', 'Não foi possível realizar o logout.');
     }
   };
-  
 
   return (
     <View style={loginstyle.container}>
-      <Image source={require('../../assets/icons/icon.png')} style={loginstyle.icon} />
+      <Image source={require('../../../assets/icons/icon.png')} style={loginstyle.icon} /> 
 
       <InputComponent 
         placeholder="Usuário, E-mail ou Telefone" 
         value={name} 
-        onChangeText={setname} 
+        onChangeText={setName} 
         style={{ width: 312, height: 47, marginBottom: 15 }} 
       />
       <InputComponent 
@@ -135,13 +140,17 @@ const LoginScreen = () => {
       />
 
       <View style={loginstyle.footer}>
-        <View style={loginstyle.secondaryButtonsContainer}>
-          <SecondaryButton 
+        <View style={loginstyle.TransparentButtonContainer}>
+          <TransparentButton 
             title="Criar conta" 
             onPress={handleCreateAccount} 
+<<<<<<< HEAD:src/pages/LoginScreen.js
             textStyle={loginstyle.secondaryButtonText} 
           />
           
+=======
+          />
+>>>>>>> 74b946e (refactor: update styles and reorganize folder structure):src/pages/Authentication/LoginScreen.js
         </View>
       </View>
     </View>

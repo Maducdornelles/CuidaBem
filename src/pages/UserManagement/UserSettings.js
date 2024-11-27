@@ -16,8 +16,8 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { AntDesign, Feather, FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import InputComponent from '../components/InputComponent';
-import styles from '../style/styleusersettings';
+import InputComponent from '../../components/InputComponent';
+import styles from '../../style/styleusersettings';
 
 const UserSettings = ({ navigation, route }) => {
   const { token, profileId } = route.params;

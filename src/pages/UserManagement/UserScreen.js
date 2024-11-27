@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import Card from '../components/Card';
-import styles from '../style/styleuser';
-import FooterNavigation from '../components/FooterNavigation';
+import Card from '../../components/Card';
+import styles from '../../style/styleuser';
+import FooterNavigation from '../../components/FooterNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -40,7 +40,7 @@ const UserScreen = ({ route }) => {
             const data = await response.json();
             const enrichedProfiles = data.map((profile) => ({
               ...profile,
-              image: require('../../assets/icons/capsula.png'),
+              image: require('../../../assets/icons/capsula.png'),
               bio: `Perfil de ${profile.name}`,
               medications: [],
             }));

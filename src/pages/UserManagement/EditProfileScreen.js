@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import InputComponent from '../components/InputComponent';
+import InputComponent from '../../components/InputComponent';
 import { AntDesign } from 'react-native-vector-icons';
+<<<<<<< HEAD:src/pages/EditProfileScreen.js
 import styles from '../style/styleEditProfile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker'; // Biblioteca para selecionar imagens
@@ -69,6 +70,10 @@ const handleUploadImage = async () => {
   }
 };
 
+=======
+import styles from '../../style/styleEditProfile';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+>>>>>>> 74b946e (refactor: update styles and reorganize folder structure):src/pages/UserManagement/EditProfileScreen.js
 
 const EditProfileScreen = ({ route }) => {
   const { profile } = route.params;
@@ -161,6 +166,11 @@ const EditProfileScreen = ({ route }) => {
       {/* Card centralizado para edição do perfil */}
       <View style={styles.card}>
         <View style={styles.formContainer}>
+          {/* Título dentro do card */}
+          <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#000', fontFamily: 'System', marginBottom: 20 }}>
+            Editar Informações
+          </Text>
+
           {/* Input para o nome de usuário */}
           <InputComponent
             style={styles.input}

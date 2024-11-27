@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
-import InputComponent from '../components/InputComponent';
-import styles from '../style/styleadduser';
+import InputComponent from '../../components/InputComponent';
+import styles from '../../style/styleadduser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddUserScreen = ({ navigation }) => {

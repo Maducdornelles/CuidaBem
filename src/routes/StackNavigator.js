@@ -1,18 +1,18 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import LoginScreen from '../pages/LoginScreen';
-import SignUpScreen from '../pages/SignUpScreen';
-import HomeScreen from '../pages/HomeScreen';
-import SettingScreen from '../pages/SettingScreen';
-import UserSettings from '../pages/UserSettings';
-import UserScreen from '../pages/UserScreen';
-import AddUserScreen from '../pages/AddUserScreen';
-import AddMedScreen from '../pages/AddMedScreen';
-import MapScreen from '../pages/MapScreen';
-import NotificationScreen from '../pages/NotificationScreen';
-import AlarmScreen from '../pages/AlarmScreen';
-import EditProfileScreen from '../pages/EditProfileScreen';
+import LoginScreen from '../pages/Authentication/LoginScreen';
+import SignUpScreen from '../pages/Authentication/SignUpScreen';
+import HomeScreen from '../pages/Home/HomeScreen';
+import SettingScreen from '../pages/Configuration/SettingScreen';
+import UserSettings from '../pages/UserManagement/UserSettings';
+import UserScreen from '../pages/UserManagement/UserScreen';
+import AddUserScreen from '../pages/UserManagement/AddUserScreen';
+import AddMedScreen from '../pages/Medication/AddMedScreen';
+import MapScreen from '../pages/Map/MapScreen';
+import NotificationScreen from '../pages/Configuration/NotificationScreen';
+import AlarmScreen from '../pages/Configuration/NotificationScreen';
+import EditProfileScreen from '../pages/UserManagement/EditProfileScreen';
 
 const Stack = createNativeStackNavigator();
 
