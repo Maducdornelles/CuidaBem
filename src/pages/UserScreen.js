@@ -29,7 +29,7 @@ const UserScreen = ({ route }) => {
     React.useCallback(() => {
       const fetchProfiles = async () => {
         try {
-          const response = await fetch('https://remediario.onrender.com/profiles/select', {
+          const response = await fetch('http://10.1.241.222:8080/profiles/select', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',

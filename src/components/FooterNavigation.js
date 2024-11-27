@@ -25,6 +25,9 @@ const FooterNavigation = () => {
     if (token && profileId) {
       navigation.navigate('Home', { token, profileId });
     } else {
+      if (profileId == null) {
+        console.error("Selecione um Perfil");
+      }
       console.error("Token ou profileId não encontrados.");
       console.log(token, profileId)
     }

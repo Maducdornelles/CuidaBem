@@ -10,6 +10,8 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
   const [medicationDetails, setMedicationDetails] = useState(null);
   const [token, setToken] = useState(null);
   const [profileId, setProfileId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -39,35 +41,38 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
   );
 
   const fetchMedicationDetails = async (medId) => {
-    
+    setIsLoading(true); // Inicia o carregamento
     try {
       const response = await fetch(`http://10.1.241.222:8080/medicamento/getbyid/${medId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
-          'Active-Profile': profileId, 
+          'Active-Profile': profileId,
         },
       });
-
+  
       if (response.ok) {
         const data = await response.json();
         setMedicationDetails(data);
       }
-
     } catch (error) {
       console.error('Erro ao buscar os detalhes do medicamento:', error.message);
       Alert.alert('Erro', 'Não foi possível carregar os detalhes do medicamento.');
+    } finally {
+      setIsLoading(false); // Finaliza o carregamento
     }
   };
   
+  
 
   useEffect(() => {
-    if (visible && medication) {
-      fetchMedicationDetails(medication.id); // Usando o id do medicamento
+    if (visible && medication?.id && token && profileId) {
+      fetchMedicationDetails(medication.id);
     }
-  }, [visible, medication]);
-
+  }, [visible, medication, token, profileId]);
+  
+  
   const toggleAlarm = async (enabled) => {
     setIsAlarmEnabled(enabled);
     if (enabled) {
@@ -105,7 +110,8 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
   
       if (response.ok) {
         Alert.alert('Sucesso', 'Medicamento excluído com sucesso.');
-        onClose(); // Fecha o modal após exclusão
+        onClose(); // Fecha o modal
+        navigation.navigate('Home', { refresh: true }); // Atualiza a Home
       } else {
         Alert.alert('Erro', 'Não foi possível excluir o medicamento.');
       }
@@ -114,6 +120,7 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
       Alert.alert('Erro', 'Não foi possível excluir o medicamento.');
     }
   };
+  
   
 
   return (
@@ -130,37 +137,25 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
               <Text style={styles.modalTitle}>{medication?.name}</Text>
               <Text style={styles.modalDescription}>{medication?.description}</Text>
 
-              {/* Exibe os detalhes do medicamento se disponíveis */}
-                {medicationDetails ? (
+              {isLoading ? (
+                <Text>Carregando detalhes do medicamento...</Text>
+              ) : (
+                medicationDetails ? (
                   <>
-                    {/* Nome do medicamento */}
                     <Text style={styles.modalDetails}>
-                      <Text style={styles.highlight}>{medicationDetails.nome}</Text>
+                      Nome: <Text style={styles.highlight}>{medicationDetails?.nome || 'Não informado'}</Text>
                     </Text>
-
-                    {/* Quantidade */}
                     <Text style={styles.modalDetails}>
-                      Quantidade: <Text style={styles.highlight}>{medicationDetails.quantidade}</Text>
+                      Quantidade: <Text style={styles.highlight}>{`${medicationDetails.quantidade}`}</Text>
                     </Text>
-
-                    {/* Descrição */}
                     <Text style={styles.modalDetails}>
                       Descrição: <Text style={styles.highlight}>{medicationDetails.descricao}</Text>
                     </Text>
                   </>
                 ) : (
-                  <Text>Carregando detalhes do medicamento...</Text> 
-                )}
-
-                {/* Exibe os alarmes */}
-                {alarms.length > 0 ? (
-                  alarms.map((time, index) => (
-                    <Text key={index} style={styles.modalSchedule}>{time}</Text> 
-                  ))
-                ) : (
-                  <Text style={styles.modalSchedule}>Nenhum alarme configurado</Text> 
-                )};
-                
+                  <Text>Detalhes do medicamento não disponíveis.</Text>
+                )
+              )}
 
 
               <View style={styles.switchContainer}>
@@ -184,13 +179,6 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
                 )}
 
                 <TouchableOpacity
-                  style={styles.primaryButton}
-                  onPress={() => navigation.navigate('AddMedScreen')}
-                >
-                  <Text style={styles.primaryButtonText}>Adicionar mais</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
                   style={styles.secondaryButton}
                   onPress={() =>
                     Alert.alert(
@@ -204,7 +192,7 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
                   }
                 >
                   <Text style={styles.secondaryButtonText}>Excluir</Text>
-                </TouchableOpacity>;
+                </TouchableOpacity>
               </View>
             </View>
           </TouchableWithoutFeedback>
