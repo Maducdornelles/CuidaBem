@@ -23,10 +23,43 @@ const UserSettings = ({ navigation, route }) => {
   const { token, profileId } = route.params;
 
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(null); // Define o estado da imagem
   const [modalVisible, setModalVisible] = useState(false);
 
-  // Função para solicitar permissões e abrir a galeria ou câmera
+  const getProfileImage = async (userId) => {
+    try {
+      const response = await fetch(`http://10.1.241.222:8080/auth/${userId}/profile-image`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Active-Profile': profileId,
+        },
+      });
+
+      if (response.ok) {
+        const imageUrl = await response.text();
+        setImage(imageUrl);
+      } else {
+        const errorMessage = await response.text();
+        Alert.alert('Erro', `Erro ao carregar a imagem do perfil: ${errorMessage}`);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar a imagem do perfil:', error);
+      Alert.alert('Erro', 'Não foi possível carregar a imagem do perfil.');
+    }
+  };
+
+  useEffect(() => {
+    const fetchUserProfileImage = async () => {
+      const userId = await AsyncStorage.getItem('userId');
+      if (userId) {
+        await getProfileImage(userId);
+      }
+    };
+
+    fetchUserProfileImage();
+  }, [token]);
+
   const requestPermissionAndLaunch = async (type) => {
     try {
       const permission =
@@ -63,14 +96,16 @@ const UserSettings = ({ navigation, route }) => {
     }
   };
 
-  // Função para deletar a conta do usuário
-  const deleteUser = async () => {
+  
+
+  const handleDeleteAccount = async () => {
     try {
-      const response = await fetch('https://remediario.onrender.com/auth/delete', {
+      const response = await fetch('http://10.1.241.222:8080/auth/delete', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
+          'Active-Profile': profileId,
         },
       });
 
@@ -78,42 +113,14 @@ const UserSettings = ({ navigation, route }) => {
         throw new Error('Erro ao deletar usuário');
       }
 
-      // Limpeza de dados locais
-      await AsyncStorage.removeItem('token');
-      await AsyncStorage.removeItem('profileId');
-
-      // Exibir mensagem de sucesso e navegar
-      Alert.alert('Sucesso', 'Sua conta foi deletada com sucesso.', [
-        {
-          text: 'OK',
-          onPress: () => navigation.navigate('SignUp'), // Redirecionar para SignUp
-        },
-      ]);
+      const result = await response.json();
+      Alert.alert('Sucesso', 'Usuário deletado com sucesso.');
+      navigation.navigate('Login'); // Redireciona para a tela de login após excluir o usuário
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível deletar sua conta.');
+      Alert.alert('Erro', error.message);
     }
   };
 
-  // Confirmação para deletar a conta
-  const handleDeleteAccount = () => {
-    Alert.alert(
-      'Confirmação',
-      'Você deseja realmente deletar sua conta?',
-      [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-        },
-        {
-          text: 'OK',
-          onPress: () => deleteUser(),
-        },
-      ],
-      { cancelable: true }
-    );
-  };
-
-  // Função para fazer logout
   const handleLogout = async () => {
     Alert.alert(
       'Confirmação',
@@ -125,7 +132,7 @@ const UserSettings = ({ navigation, route }) => {
           onPress: async () => {
             try {
               await AsyncStorage.multiRemove(['token', 'profileId']);
-              navigation.navigate('Login'); // Redireciona para a tela de login
+              navigation.navigate('Login');
             } catch (error) {
               Alert.alert('Erro', 'Não foi possível realizar o logout.');
             }
@@ -135,9 +142,6 @@ const UserSettings = ({ navigation, route }) => {
       { cancelable: true }
     );
   };
-
-  // ComponentDidMount emula comportamento do token e profileId
-  useEffect(() => {}, []);
 
   return (
     <KeyboardAvoidingView
@@ -162,15 +166,13 @@ const UserSettings = ({ navigation, route }) => {
           </TouchableOpacity>
 
           <Text style={styles.label}>Email</Text>
-          <InputComponent placeholder="Digite seu email" keyboardType="email-address" width={290} />
-          <TouchableOpacity style={styles.changeButton}>
-            <Text style={styles.buttonText}>Trocar</Text>
-          </TouchableOpacity>
+          <InputComponent placeholder="carlos@gmail.com" keyboardType="email-address" width={290} />
+          
 
           <Text style={styles.label}>Senha</Text>
           <View style={styles.passwordContainer}>
             <InputComponent
-              placeholder="Digite sua senha"
+              placeholder="Senha123@"
               secureTextEntry={!passwordVisible}
               width={290}
             />
@@ -182,9 +184,7 @@ const UserSettings = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity style={styles.changeButton}>
-            <Text style={styles.buttonText}>Trocar</Text>
-          </TouchableOpacity>
+          
 
           <TouchableOpacity onPress={handleDeleteAccount} style={styles.deleteContainer}>
             <Feather name="delete" size={24} color="#000" />

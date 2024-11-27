@@ -1,11 +1,72 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Modal, TouchableOpacity, Switch, TouchableWithoutFeedback, Alert } from 'react-native';
-import { scheduleAlarms } from '../services/alarmService'; 
 import * as Notifications from 'expo-notifications';
+import { useFocusEffect } from '@react-navigation/native'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ModalComponent = ({ visible, medication, onClose, navigation, onDelete }) => {
+const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, route }) => {
   const [isAlarmEnabled, setIsAlarmEnabled] = useState(false);
   const [alarms, setAlarms] = useState([]);
+  const [medicationDetails, setMedicationDetails] = useState(null);
+  const [token, setToken] = useState(null);
+  const [profileId, setProfileId] = useState(null);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const getTokenAndProfileId = async () => {
+        try {
+          const storedToken = await AsyncStorage.getItem('token');
+          const storedProfileId = await AsyncStorage.getItem('profileId');
+          if (storedToken && storedProfileId) {
+            setToken(storedToken);
+            setProfileId(storedProfileId);
+          }
+        } catch (error) {
+          console.error('Erro ao buscar dados do AsyncStorage:', error);
+        }
+      };
+
+      // Verifica parâmetros da navegação
+      if (route?.params) {
+        const { token: navToken, profileId: navProfileId } = route.params;
+        setToken(navToken);
+        setProfileId(navProfileId);
+      } else {
+        // Caso não haja parâmetros, busca do AsyncStorage
+        getTokenAndProfileId();
+      }
+    }, [route?.params])
+  );
+
+  const fetchMedicationDetails = async (medId) => {
+    
+    try {
+      const response = await fetch(`http://10.1.241.222:8080/medicamento/getbyid/${medId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Active-Profile': profileId, 
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMedicationDetails(data);
+      }
+
+    } catch (error) {
+      console.error('Erro ao buscar os detalhes do medicamento:', error.message);
+      Alert.alert('Erro', 'Não foi possível carregar os detalhes do medicamento.');
+    }
+  };
+  
+
+  useEffect(() => {
+    if (visible && medication) {
+      fetchMedicationDetails(medication.id); // Usando o id do medicamento
+    }
+  }, [visible, medication]);
 
   const toggleAlarm = async (enabled) => {
     setIsAlarmEnabled(enabled);
@@ -31,6 +92,30 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete }) 
     }
   };
 
+  const deleteMedication = async (medId) => {
+    try {
+      const response = await fetch(`http://10.1.241.222:8080/medicamento/deletebyid/${medId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Active-Profile': profileId,
+        },
+      });
+  
+      if (response.ok) {
+        Alert.alert('Sucesso', 'Medicamento excluído com sucesso.');
+        onClose(); // Fecha o modal após exclusão
+      } else {
+        Alert.alert('Erro', 'Não foi possível excluir o medicamento.');
+      }
+    } catch (error) {
+      console.error('Erro ao excluir o medicamento:', error.message);
+      Alert.alert('Erro', 'Não foi possível excluir o medicamento.');
+    }
+  };
+  
+
   return (
     <Modal
       transparent
@@ -42,15 +127,41 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete }) 
         <View style={styles.modalContainer}>
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>{medication.name}</Text>
-              <Text style={styles.modalDescription}>{medication.description}</Text>
+              <Text style={styles.modalTitle}>{medication?.name}</Text>
+              <Text style={styles.modalDescription}>{medication?.description}</Text>
 
-              <Text style={styles.modalDetails}>
-                • Restam <Text style={styles.highlight}>{medication.details.split('• Restam ')[1].split('.')[0]}</Text>.
-              </Text>
-              <Text style={styles.modalDetails}>
-                • Comprar novamente em <Text style={styles.highlight}>{medication.details.split('• Comprar novamente em ')[1].split('.')[0]}</Text>.
-              </Text>
+              {/* Exibe os detalhes do medicamento se disponíveis */}
+                {medicationDetails ? (
+                  <>
+                    {/* Nome do medicamento */}
+                    <Text style={styles.modalDetails}>
+                      <Text style={styles.highlight}>{medicationDetails.nome}</Text>
+                    </Text>
+
+                    {/* Quantidade */}
+                    <Text style={styles.modalDetails}>
+                      Quantidade: <Text style={styles.highlight}>{medicationDetails.quantidade}</Text>
+                    </Text>
+
+                    {/* Descrição */}
+                    <Text style={styles.modalDetails}>
+                      Descrição: <Text style={styles.highlight}>{medicationDetails.descricao}</Text>
+                    </Text>
+                  </>
+                ) : (
+                  <Text>Carregando detalhes do medicamento...</Text> 
+                )}
+
+                {/* Exibe os alarmes */}
+                {alarms.length > 0 ? (
+                  alarms.map((time, index) => (
+                    <Text key={index} style={styles.modalSchedule}>{time}</Text> 
+                  ))
+                ) : (
+                  <Text style={styles.modalSchedule}>Nenhum alarme configurado</Text> 
+                )};
+                
+
 
               <View style={styles.switchContainer}>
                 <Text style={styles.switchLabel}>Habilitar Alarme</Text>
@@ -81,10 +192,19 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete }) 
 
                 <TouchableOpacity
                   style={styles.secondaryButton}
-                  onPress={() => onDelete(medication.id)} // Exclui o medicamento ao chamar onDelete
+                  onPress={() =>
+                    Alert.alert(
+                      'Confirmar exclusão',
+                      'Tem certeza que deseja excluir este medicamento?',
+                      [
+                        { text: 'Cancelar', style: 'cancel' },
+                        { text: 'Excluir', style: 'destructive', onPress: () => deleteMedication(medication.id) },
+                      ]
+                    )
+                  }
                 >
                   <Text style={styles.secondaryButtonText}>Excluir</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>;
               </View>
             </View>
           </TouchableWithoutFeedback>

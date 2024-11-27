@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, Image, Alert } from 'react-native';
 import stylehome from '../style/stylehome'; 
 import Card from '../components/Card'; 
 import FooterNavigation from '../components/FooterNavigation'; 
 import ModalComponent from '../components/ModalComponent'; 
 import { useFocusEffect } from '@react-navigation/native'; 
-import AsyncStorage from '@react-native-async-storage/async-storage'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation, route }) => {
   const [token, setToken] = useState(null);
@@ -13,12 +13,11 @@ const HomeScreen = ({ navigation, route }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedMedication, setSelectedMedication] = useState(null);
   const [medications, setMedications] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Adicionando estado de carregamento
 
   // Função para buscar os medicamentos da API
   const fetchMedications = async () => {
     try {
-      const response = await fetch('https://remediario.onrender.com/medicamento/list', {
+      const response = await fetch('http://10.1.241.222:8080/medicamento/list', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -39,7 +38,6 @@ const HomeScreen = ({ navigation, route }) => {
       console.error('Erro ao buscar medicamentos:', error);
       Alert.alert('Erro', 'Não foi possível carregar os medicamentos.');
     }
-    setIsLoading(false); // Finaliza o carregamento
   };
 
   // Lê os dados do AsyncStorage ao entrar na tela
@@ -48,15 +46,10 @@ const HomeScreen = ({ navigation, route }) => {
       const getTokenAndProfileId = async () => {
         const storedToken = await AsyncStorage.getItem('token');
         const storedProfileId = await AsyncStorage.getItem('profileId');
-        
         if (storedToken && storedProfileId) {
           setToken(storedToken);
           setProfileId(storedProfileId);
-        } else {
-          console.error('Token ou ProfileId não encontrados.');
-          Alert.alert('Erro', 'Token ou ProfileId não encontrados.');
         }
-        setIsLoading(false);  // Finaliza o carregamento
       };
 
       // Se os parâmetros da navegação estiverem disponíveis, use-os
@@ -64,7 +57,6 @@ const HomeScreen = ({ navigation, route }) => {
         const { token, profileId } = route.params;
         setToken(token);
         setProfileId(profileId);
-        setIsLoading(false); // Finaliza o carregamento se os parâmetros estiverem presentes
       } else {
         // Se não, busca do AsyncStorage
         getTokenAndProfileId();
@@ -83,16 +75,6 @@ const HomeScreen = ({ navigation, route }) => {
     setMedications(prevMedications => prevMedications.filter(med => med.id !== id));
     setModalVisible(false); 
   };
-
-  // Exibe uma tela de carregamento enquanto os dados são buscados
-  if (isLoading) {
-    return (
-      <View style={stylehome.container}>
-        <ActivityIndicator size="large" color="#62A4B0" />
-        <Text>Carregando...</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={stylehome.container}>
