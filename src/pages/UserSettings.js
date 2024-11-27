@@ -39,13 +39,9 @@ const UserSettings = ({ navigation, route }) => {
       if (response.ok) {
         const imageUrl = await response.text();
         setImage(imageUrl);
-      } else {
-        const errorMessage = await response.text();
-        Alert.alert('Erro', `Erro ao carregar a imagem do perfil: ${errorMessage}`);
-      }
+      } 
     } catch (error) {
-      console.error('Erro ao buscar a imagem do perfil:', error);
-      Alert.alert('Erro', 'Não foi possível carregar a imagem do perfil.');
+      
     }
   };
 
