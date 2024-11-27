@@ -11,6 +11,8 @@ const UserScreen = ({ route }) => {
   const navigation = useNavigation();
   const { token } = route.params || {}; // Recebe apenas o token
 
+  const [profileImage, setProfileImage] = useState(null); // Para armazenar a imagem do perfil
+
   const [profiles, setProfiles] = useState([]); // Inicializa o estado vazio
 
   // Função para salvar o profileId no AsyncStorage
@@ -60,7 +62,7 @@ const UserScreen = ({ route }) => {
 
   const selectProfile = async (profileId) => {
     try {
-      const response = await fetch(`https://remediario.onrender.com/profiles/select/${profileId}`, {
+      const response = await fetch(`http://10.1.241.222:8080/profiles/select/${profileId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,6 +88,9 @@ const UserScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+     
+        </TouchableOpacity>
         <Text style={styles.headerText}>Perfil</Text>
       </View>
 

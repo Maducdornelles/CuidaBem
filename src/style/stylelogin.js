@@ -32,7 +32,7 @@ const loginstyle = StyleSheet.create({
   secondaryButtonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
+    width: '55%',
     paddingHorizontal: 30, 
     paddingVertical: 5,   
   },

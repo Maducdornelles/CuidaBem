@@ -87,7 +87,7 @@ const AddUserScreen = ({ navigation }) => {
   
     try {
       const token = await AsyncStorage.getItem('token'); // Recupera o token do armazenamento
-      const response = await fetch('https://remediario.onrender.com/profiles/create', {
+      const response = await fetch('http://10.1.241.222:8080/profiles/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

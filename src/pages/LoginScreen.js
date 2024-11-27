@@ -20,8 +20,6 @@ const LoginScreen = () => {
       try {
         const storedToken = await AsyncStorage.getItem('');
         if (storedToken != null) {
-          console.log('Token encontrado no AsyncStorage:', storedToken);
-          // Se o token está armazenado, navegue para o perfil
           navigation.navigate('User', { token: storedToken });
         }
       } catch (error) {
@@ -43,7 +41,7 @@ const LoginScreen = () => {
     setLoading(true); // Começa o carregamento
     
     try {
-      const response = await fetch('https://remediario.onrender.com/auth/login', {
+      const response = await fetch('http://10.1.241.222:8080/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,6 +57,7 @@ const LoginScreen = () => {
   
         // Armazena o token no AsyncStorage
         await AsyncStorage.setItem('token', data.token);
+        await AsyncStorage.setItem('userId', data.id);
 
         navigation.navigate('User', { token: data.token});
   
@@ -145,15 +144,11 @@ const LoginScreen = () => {
             onPress={handleCreateAccount} 
             textStyle={loginstyle.secondaryButtonText} 
           />
-          <SecondaryButton 
-            title="Entrar sem cadastro" 
-            onPress={handleGuestAccess} 
-            textStyle={loginstyle.secondaryButtonText} 
-          />
+          
         </View>
       </View>
     </View>
   );
 };
-
+ 
 export default LoginScreen;
