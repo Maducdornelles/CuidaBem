@@ -6,7 +6,7 @@ import PrimaryButton from '../../components/PrimaryButton'; // Caminho corrigido
 import TransparentButton from '../../components/TransparentButton'; // Caminho corrigido
 import loginstyle from '../../style/stylelogin'; // Caminho corrigido
 import { useNavigation } from '@react-navigation/native';
-import icon from '../../../assets/icons/icon.png';
+
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -58,11 +58,9 @@ const LoginScreen = () => {
         // Armazena o token no AsyncStorage
         await AsyncStorage.setItem('token', data.token);
         await AsyncStorage.setItem('userId', data.id);
-<<<<<<< HEAD:src/pages/LoginScreen.js
-=======
+
 
         navigation.navigate('User', { token: data.token });
->>>>>>> 74b946e (refactor: update styles and reorganize folder structure):src/pages/Authentication/LoginScreen.js
 
         if (isRememberMe) {
           await AsyncStorage.setItem('user', JSON.stringify({ name, password }));
@@ -85,11 +83,6 @@ const LoginScreen = () => {
     navigation.navigate('SignUp');
   };
 
-<<<<<<< HEAD:src/pages/LoginScreen.js
-  
-
-=======
->>>>>>> 74b946e (refactor: update styles and reorganize folder structure):src/pages/Authentication/LoginScreen.js
   const handleLogout = async () => {
     try {
       // Remove os dados do AsyncStorage
@@ -144,13 +137,12 @@ const LoginScreen = () => {
           <TransparentButton 
             title="Criar conta" 
             onPress={handleCreateAccount} 
-<<<<<<< HEAD:src/pages/LoginScreen.js
+
             textStyle={loginstyle.secondaryButtonText} 
           />
           
-=======
-          />
->>>>>>> 74b946e (refactor: update styles and reorganize folder structure):src/pages/Authentication/LoginScreen.js
+          
+
         </View>
       </View>
     </View>

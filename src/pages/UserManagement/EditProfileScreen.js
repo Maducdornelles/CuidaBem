@@ -3,8 +3,7 @@ import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import InputComponent from '../../components/InputComponent';
 import { AntDesign } from 'react-native-vector-icons';
-<<<<<<< HEAD:src/pages/EditProfileScreen.js
-import styles from '../style/styleEditProfile';
+import styles from '../../style/styleEditProfile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker'; // Biblioteca para selecionar imagens
 import { Platform } from 'react-native';
@@ -70,10 +69,7 @@ const handleUploadImage = async () => {
   }
 };
 
-=======
-import styles from '../../style/styleEditProfile';
-import AsyncStorage from '@react-native-async-storage/async-storage';
->>>>>>> 74b946e (refactor: update styles and reorganize folder structure):src/pages/UserManagement/EditProfileScreen.js
+
 
 const EditProfileScreen = ({ route }) => {
   const { profile } = route.params;

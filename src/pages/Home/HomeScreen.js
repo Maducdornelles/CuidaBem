@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Image, Alert } from 'react-native';
-<<<<<<< HEAD:src/pages/HomeScreen.js
-import stylehome from '../style/stylehome'; 
-import Card from '../components/Card'; 
-import FooterNavigation from '../components/FooterNavigation'; 
-import ModalComponent from '../components/ModalComponent'; 
-=======
 import stylehome from '../../style/stylehome'; 
 import Card from '../../components/Card'; 
 import FooterNavigation from '../../components/FooterNavigation'; 
 import ModalComponent from '../../components/ModalComponent'; 
->>>>>>> 74b946e (refactor: update styles and reorganize folder structure):src/pages/Home/HomeScreen.js
+
 import { useFocusEffect } from '@react-navigation/native'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
