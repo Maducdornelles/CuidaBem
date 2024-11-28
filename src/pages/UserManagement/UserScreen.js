@@ -11,24 +11,14 @@ const UserScreen = ({ route }) => {
   const navigation = useNavigation();
   const { token } = route.params || {}; // Recebe apenas o token
 
-  const [profileImage, setProfileImage] = useState(null); // Para armazenar a imagem do perfil
-
   const [profiles, setProfiles] = useState([]); // Inicializa o estado vazio
-
-  // Função para salvar o profileId no AsyncStorage
-  const saveProfileId = async (profileId) => {
-    try {
-      await AsyncStorage.setItem('profileId', profileId.toString());
-    } catch (error) {
-      console.error('Erro ao salvar profileId no AsyncStorage:', error);
-    }
-  };
 
   useFocusEffect(
     React.useCallback(() => {
       const fetchProfiles = async () => {
+        const apiIp = await AsyncStorage.getItem('apiIp');
         try {
-          const response = await fetch('http://10.1.241.222:8080/profiles/select', {
+          const response = await fetch('http://' + apiIp + ':8080/profiles/select', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -40,7 +30,7 @@ const UserScreen = ({ route }) => {
             const data = await response.json();
             const enrichedProfiles = data.map((profile) => ({
               ...profile,
-              image: require('../../../assets/icons/capsula.png'),
+              image: require('../../../assets/icons/Perfil.png'),
               bio: `Perfil de ${profile.name}`,
               medications: [],
             }));
@@ -60,8 +50,9 @@ const UserScreen = ({ route }) => {
   
 
   const selectProfile = async (profileId) => {
+    const apiIp = await AsyncStorage.getItem('apiIp');
     try {
-      const response = await fetch(`http://10.1.241.222:8080/profiles/select/${profileId}`, {
+      const response = await fetch('http://' + apiIp + ':8080/profiles/select/' + (profileId.toString()), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,7 +61,9 @@ const UserScreen = ({ route }) => {
       });
 
       if (response.ok) {
-        await saveProfileId(profileId);
+        const data = await response.json();
+        await AsyncStorage.setItem('profileId', profileId.toString());
+        await AsyncStorage.setItem('name', data.name);
 
         navigation.navigate('Home', { token, profileId });
       } else {

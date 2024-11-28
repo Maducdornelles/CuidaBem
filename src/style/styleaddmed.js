@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
     alignItems: 'center',  // Centraliza horizontalmente todos os itens no container
+    marginTop:-30,
   },
   header: {
     width: '100%',
@@ -20,6 +21,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+   
   },
   headerText: {
     fontSize: 16,
@@ -75,6 +77,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 0,  // Ajustado para controle manual do espaçamento entre os elementos
     paddingHorizontal: 80, // Ajusta o espaçamento à esquerda/direita
+    marginTop :-10,
   },
   switchLabel: {
     fontSize: 16,
@@ -83,6 +86,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flex: 1,
     marginRight: 10,
+    marginTop :-10,
   },
   buttonContainer: {
     alignItems: 'center',
@@ -114,12 +118,14 @@ const styles = StyleSheet.create({
     marginTop: 10, // Ajuste do footer
   },
   secondaryButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    paddingHorizontal: 30,
-    paddingVertical: 5,
-  },
+  flexDirection: 'row',
+  justifyContent: 'center', // Centraliza os botões horizontalmente
+  alignItems: 'center', // Garante que os itens fiquem alinhados verticalmente no centro
+  width: '100%',
+  paddingHorizontal: 30,
+  paddingVertical: 5,
+  marginTop: 20, // Move o container para cima (ajuste o valor conforme necessário)
+},
 });
 
 export default styles;

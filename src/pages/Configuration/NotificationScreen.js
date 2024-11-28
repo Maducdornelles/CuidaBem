@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch, Modal, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Switch, Modal, StyleSheet, Alert } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import styles from '../../style/notificationstyle';
 
 const NotificationScreen = ({ navigation, route }) => {
-  const { alarms } = route.params || { alarms: [] }; // Garantir que 'alarms' seja um array vazio se não estiver presente
+  const { alarms } = route.params || { alarms: [] }; // Garantir que 'alarms' seja fornecido
   const [isEnabled, setIsEnabled] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(null);
+  const [currentAlarms, setCurrentAlarms] = useState(alarms); // Estado local para os alarmes
 
   const toggleSwitch = () => setIsEnabled((prev) => !prev);
 
   const handleDelete = () => {
-    // Aqui você pode adicionar lógica para excluir o alarme
-    setModalVisible(false);
+    if (selectedIndex !== null) {
+      const updatedAlarms = currentAlarms.filter((_, index) => index !== selectedIndex); // Remover o alarme da lista local
+      setCurrentAlarms(updatedAlarms); // Atualizar a lista de alarmes localmente
+      setModalVisible(false);
+      Alert.alert('Sucesso', 'Alarme excluído com sucesso.');
+    }
   };
 
   const handleOpenModal = (index) => {
@@ -32,20 +37,26 @@ const NotificationScreen = ({ navigation, route }) => {
 
       <ScrollView contentContainerStyle={styles.body}>
         <Text style={styles.nextAlarmText}>Próximos Alarmes:</Text>
-        {alarms && alarms.length > 0 ? (
-          alarms.map((alarm, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.notificationCard}
-              onPress={() => handleOpenModal(index)}
-            >
-              <Text style={styles.cardText}>
-                {alarm} - Lembrete de Medicamento
-              </Text>
-            </TouchableOpacity>
-          ))
+        
+        {/* Verifica se a notificação está permitida antes de exibir a lista de alarmes */}
+        {isEnabled ? (
+          currentAlarms && currentAlarms.length > 0 ? (
+            currentAlarms.map((alarm, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.notificationCard}
+                onPress={() => handleOpenModal(index)}
+              >
+                <Text style={styles.cardText}>
+                  {alarm} - Lembrete de Medicamento
+                </Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.noAlarmsText}>Nenhum alarme configurado.</Text>
+          )
         ) : (
-          <Text style={styles.noAlarmsText}>Nenhum alarme configurado.</Text> // Exibe mensagem caso não haja alarmes
+          <Text style={styles.noAlarmsText}>Notificações desativadas. Ative para ver os alarmes.</Text>
         )}
 
         <View style={styles.switchSection}>

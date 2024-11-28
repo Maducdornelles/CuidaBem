@@ -7,19 +7,19 @@ import TransparentButton from '../../components/TransparentButton'; // Caminho c
 import loginstyle from '../../style/stylelogin'; // Caminho corrigido
 import { useNavigation } from '@react-navigation/native';
 
-
 const LoginScreen = () => {
+  const apiIp = '192.168.0.114';
+  AsyncStorage.setItem('apiIp', apiIp);
   const navigation = useNavigation();
   const [isRememberMe, setIsRememberMe] = useState(false);
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); // Para gerenciar o estado de carregamento durante o login
+  const [loading, setLoading] = useState(false);
 
-  // Verifica se há um token armazenado e redireciona
   useEffect(() => {
     const checkRememberMe = async () => {
       try {
-        const storedToken = await AsyncStorage.getItem('token'); // Ajustado: chave do AsyncStorage
+        const storedToken = await AsyncStorage.getItem('token');
         if (storedToken != null) {
           navigation.navigate('User', { token: storedToken });
         }
@@ -38,10 +38,10 @@ const LoginScreen = () => {
       return;
     }
 
-    setLoading(true); // Começa o carregamento
+    setLoading(true);
 
     try {
-      const response = await fetch('http://10.1.241.222:8080/auth/login', {
+      const response = await fetch('http://' + apiIp + ':8080/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,12 +54,7 @@ const LoginScreen = () => {
 
       if (response.ok) {
         const data = await response.json();
-
-        // Armazena o token no AsyncStorage
         await AsyncStorage.setItem('token', data.token);
-        await AsyncStorage.setItem('userId', data.id);
-
-
         navigation.navigate('User', { token: data.token });
 
         if (isRememberMe) {
@@ -75,7 +70,7 @@ const LoginScreen = () => {
       console.error('Erro ao acessar a API:', error);
       Alert.alert('Erro', 'Ocorreu um erro ao tentar autenticar. Tente novamente.');
     } finally {
-      setLoading(false); // Finaliza o carregamento
+      setLoading(false);
     }
   };
 
@@ -83,19 +78,8 @@ const LoginScreen = () => {
     navigation.navigate('SignUp');
   };
 
-  const handleLogout = async () => {
-    try {
-      // Remove os dados do AsyncStorage
-      await AsyncStorage.removeItem('token');
-      await AsyncStorage.removeItem('profileId');
-      await AsyncStorage.removeItem('user');
-
-      // Redireciona para a tela de login
-      navigation.navigate('Login');
-    } catch (error) {
-      console.error('Erro ao realizar logout:', error);
-      Alert.alert('Erro', 'Não foi possível realizar o logout.');
-    }
+  const handleGuestAccess = () => {
+    navigation.navigate('Home'); // Troque 'Home' pela tela principal do app
   };
 
   return (
@@ -129,7 +113,7 @@ const LoginScreen = () => {
         title={loading ? "Acessando..." : "Acessar"} 
         onPress={handleLogin} 
         textStyle={loginstyle.primaryButtonText} 
-        disabled={loading} // Desabilita o botão enquanto carrega
+        disabled={loading}
       />
 
       <View style={loginstyle.footer}>
@@ -137,16 +121,20 @@ const LoginScreen = () => {
           <TransparentButton 
             title="Criar conta" 
             onPress={handleCreateAccount} 
-
             textStyle={loginstyle.secondaryButtonText} 
           />
-          
-          
-
         </View>
       </View>
+
+      {/* Botão para acessar como visitante */}
+      <PrimaryButton 
+        title="Entrar como Visitante" 
+        onPress={handleGuestAccess} 
+        textStyle={loginstyle.primaryButtonText} 
+        style={{ marginTop: 15 }} // Adicione espaçamento
+      />
     </View>
-  );
+  );  
 };
- 
+
 export default LoginScreen;

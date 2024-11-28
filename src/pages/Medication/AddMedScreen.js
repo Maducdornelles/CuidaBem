@@ -5,6 +5,7 @@ import InputComponent from '../../components/InputComponent';
 import TransparentButton from '../../components/TransparentButton';
 import FooterNavigation from '../../components/FooterNavigation';
 import styles from '../../style/styleaddmed';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddMedScreen = ({ route, navigation }) => {
   const { token, userId } = route.params;
@@ -31,7 +32,8 @@ const AddMedScreen = ({ route, navigation }) => {
     };
   
     try {
-      const response = await fetch('http://10.1.241.222:8080/medicamento/create', {
+      const apiIp = await AsyncStorage.getItem('apiIp');
+      const response = await fetch('http://'+ apiIp + ':8080/medicamento/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,6 +66,12 @@ const AddMedScreen = ({ route, navigation }) => {
         <>
           <TouchableOpacity onPress={() => { setSelectedType('Comprimido'); setOpenTypeModal(false); }} >
             <Text style={modalStyles.modalOption}>Comprimido</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { setSelectedType('Cápsula'); setOpenTypeModal(false); }} >
+            <Text style={modalStyles.modalOption}>Cápsula</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { setSelectedType('Cápsula'); setOpenTypeModal(false); }} >
+            <Text style={modalStyles.modalOption}>Cápsula</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => { setSelectedType('Cápsula'); setOpenTypeModal(false); }} >
             <Text style={modalStyles.modalOption}>Cápsula</Text>
@@ -129,12 +137,12 @@ const AddMedScreen = ({ route, navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.frequencyButton}
-          onPress={() => navigation.navigate('AlarmScreen')}
-        >
-          <Text style={styles.buttonText}>Frequência</Text>
-          <Feather name="clock" size={20} color="#fff" style={styles.frequencyIcon} />
-        </TouchableOpacity>
+  style={styles.frequencyButton}
+  onPress={() => navigation.navigate('AlarmScreen')}
+>
+  <Text style={styles.buttonText}>Frequência</Text>
+  <Feather name="clock" size={20} color="#fff" style={styles.frequencyIcon} />
+</TouchableOpacity>
 
         <View style={styles.switchContainer}>
           <Text style={styles.switchLabel}>Habilitar Alarme</Text>

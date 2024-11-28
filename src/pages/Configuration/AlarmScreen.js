@@ -1,25 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
-import * as Notifications from 'expo-notifications'; // Modifique conforme sua implementação do Push Notification
-import styles from '../style/stylealarm';
+import * as Notifications from 'expo-notifications';
+import styles from '../../style/stylealarm';
 
 const AlarmScreen = () => {
   const [selectedTime, setSelectedTime] = useState(new Date());
   const [alarms, setAlarms] = useState([]);
-  const [interval, setInterval] = useState(1); // Intervalo padrão: 1 hora
+  const [interval, setInterval] = useState(2);
   const [showPicker, setShowPicker] = useState(false);
 
   const navigation = useNavigation();
 
-  const handleTimeChange = (event, time) => {
-    setShowPicker(false);
-    if (time) {
-      setSelectedTime(time);
+  // Função otimizada de cálculos
+  const calculateNextAlarms = useCallback((baseTime, interval) => {
+    const nextAlarms = [];
+    
+    for (let i = 1; i <= 4; i++) {
+      const nextTime = new Date(baseTime);
+      nextTime.setHours(baseTime.getHours() + interval * i);
+      nextAlarms.push(nextTime);
     }
-  };
 
+    const formattedAlarms = nextAlarms.map((time) =>
+      time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    );
+
+    setAlarms(formattedAlarms);
+    scheduleNotifications(nextAlarms);
+  }, []);
+
+  // Função para agendar as notificações
   const scheduleNotifications = (alarmTimes) => {
     alarmTimes.forEach((time, index) => {
       const trigger = new Date(time);
@@ -39,34 +51,28 @@ const AlarmScreen = () => {
     });
   };
 
-  const calculateNextAlarms = () => {
-    const baseTime = selectedTime;
-    const nextAlarms = [];
-
-    // Calcular os próximos horários de acordo com o intervalo
-    for (let i = 1; i <= 4; i++) {
-      const nextTime = new Date(baseTime);
-      nextTime.setHours(baseTime.getHours() + interval * i);
-      nextAlarms.push(nextTime);
+  const handleTimeChange = (event, time) => {
+    setShowPicker(false);
+    if (time) {
+      setSelectedTime(time);
+      calculateNextAlarms(time, interval);
     }
-
-    // Formatando os horários para exibição
-    const formattedAlarms = nextAlarms.map((time) =>
-      time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    );
-
-    setAlarms(formattedAlarms);
-    scheduleNotifications(nextAlarms); // Agendar as notificações
-    Alert.alert('Alarmes Agendados');
   };
 
   const handleIntervalChange = (value) => {
     setInterval(value);
-    calculateNextAlarms(); // Recalcular os alarmes quando o intervalo for alterado
+    calculateNextAlarms(selectedTime, value);
   };
 
   const handleBackPress = () => {
     navigation.goBack();
+  };
+
+  // Função que salva e navega para a tela de notificações
+  const handleCalculateAlarms = () => {
+    Alert.alert('Alarmes Agendados');
+    // Navegar para a tela de notificações e passar os horários calculados
+    navigation.navigate('Notification', { alarms });  // Passando os horários para a tela de Notificação
   };
 
   return (
@@ -89,7 +95,7 @@ const AlarmScreen = () => {
         )}
 
         <View style={styles.intervals}>
-          {[1, 3, 4, 6, 12].map((value) => (
+          {[2, 3, 4, 6, 8, 12].map((value) => (
             <TouchableOpacity
               key={value}
               style={[styles.intervalButton, interval === value && styles.selectedButton]}
@@ -111,7 +117,7 @@ const AlarmScreen = () => {
           <TouchableOpacity onPress={handleBackPress} style={styles.button}>
             <Text style={styles.buttonText}>Voltar</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={calculateNextAlarms} style={styles.button}>
+          <TouchableOpacity onPress={handleCalculateAlarms} style={styles.button}>
             <Text style={styles.buttonText}>Calcular Alarmes</Text>
           </TouchableOpacity>
         </View>

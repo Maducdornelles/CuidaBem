@@ -80,6 +80,7 @@ const AddUserScreen = ({ navigation }) => {
   };
 
   const saveProfile = async () => {
+    const apiIp = await AsyncStorage.getItem('apiIp');
     if (name.trim() === '' || bio.trim() === '') {
       Alert.alert('Campos obrigatórios', 'Por favor, preencha o nome de usuário e a bio.');
       return;
@@ -87,7 +88,7 @@ const AddUserScreen = ({ navigation }) => {
   
     try {
       const token = await AsyncStorage.getItem('token'); // Recupera o token do armazenamento
-      const response = await fetch('http://10.1.241.222:8080/profiles/create', {
+      const response = await fetch('http://'+ apiIp +':8080/profiles/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

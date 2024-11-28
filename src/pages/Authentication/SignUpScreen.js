@@ -17,6 +17,7 @@ const SignUpScreen = ({ navigation }) => {
   const toggleSwitch = () => setChecked((previousState) => !previousState);
 
   const handleCreateAccount = async () => {
+    const apiIp = await AsyncStorage.getItem('apiIp');
     if (!name || !phone || !email || !password || !confirmPassword) {
       Alert.alert("Erro", "Por favor, preencha todos os campos.");
       return;
@@ -37,7 +38,7 @@ const SignUpScreen = ({ navigation }) => {
         name: name,
       };
   
-      const response = await fetch('http://10.1.241.222:8080/auth/register', {
+      const response = await fetch('http://'+ apiIp +':8080/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

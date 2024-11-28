@@ -17,8 +17,9 @@ const HomeScreen = ({ navigation, route }) => {
 
   // Função para buscar os medicamentos da API
   const fetchMedications = async () => {
+    const apiIp = await AsyncStorage.getItem('apiIp');
     try {
-      const response = await fetch('http://10.1.241.222:8080/medicamento/list', {
+      const response = await fetch('http://' + apiIp + ':8080/medicamento/list', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +94,7 @@ const HomeScreen = ({ navigation, route }) => {
             }}>
               <View style={stylehome.cardContent}>
                 <Image
-                  source={require('../../../assets/icons/capsula.png')}
+                  source={require('../../../assets/icons/Capsula.png')}
                   style={stylehome.cardImage}
                 />
                 <View style={stylehome.cardTextContainer}>

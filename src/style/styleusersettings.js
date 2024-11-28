@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: 316,
+    height: 400,
     backgroundColor: '#F3F3F3',
     alignSelf: 'center',
     marginTop: 80,
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     padding: 20,
-    alignItems: 'flex-start',
+    justifyContent: 'space-between', // Distribui o conteúdo verticalmente
   },
   cameraContainer: {
     marginBottom: 20,
@@ -44,36 +45,22 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
+    
+  },
+  textContainer: {
+    alignItems: 'center', // Centraliza os textos no eixo horizontal
+    marginTop:-80,
+    
   },
   label: {
     fontWeight: 'bold',
     marginBottom: 5,
     color: '#000',
     fontFamily: 'System',
+    fontSize:16,
+    marginTop:30,
   },
-  changeButton: {
-    width: 136,
-    height: 41,
-    backgroundColor: '#62A4B0',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-    fontFamily: 'System',
-  },
-  passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  eyeIcon: {
-    position: 'absolute',
-    right: 10,
-  },
+  
   bottomBar: {
     width: '100%',
     height: 57,
@@ -93,9 +80,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   logoutText: {
-    color: '#000', // Cor do texto em preto
+    color: '#62A4B0', // Cor do texto em preto
     fontSize: 20,
     marginLeft: 10, // Deu certo tudoooooo 
+  },
+  deleteText: {
+    color: '#62A4B0', // Cor do texto em preto
+    fontSize: 14,
+    marginLeft: 39, // Deu certo tudoooooo 
+    marginTop:-23,
+  },
+  uploadButtonInsideCard: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    backgroundColor: '#62A4B0',
+    borderRadius: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    marginTop:15,
+  },
+  uploadButtonText: {
+    fontWeight: 'bold', // Negrito
+    fontFamily: 'System', // Fonte padrão
+    color: '#fff', // Cor preta
+    fontSize: 14, // Tamanho da fonte ajustável
   },
 });
 

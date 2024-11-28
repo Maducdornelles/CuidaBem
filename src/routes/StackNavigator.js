@@ -10,9 +10,9 @@ import UserScreen from '../pages/UserManagement/UserScreen';
 import AddUserScreen from '../pages/UserManagement/AddUserScreen';
 import AddMedScreen from '../pages/Medication/AddMedScreen';
 import MapScreen from '../pages/Map/MapScreen';
-import NotificationScreen from '../pages/Configuration/NotificationScreen';
-import AlarmScreen from '../pages/Configuration/NotificationScreen';
+import  NotificationScreen  from '../pages/Configuration/NotificationScreen'; // Correção de importação
 import EditProfileScreen from '../pages/UserManagement/EditProfileScreen';
+import AlarmScreen from '../pages/Configuration/AlarmScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,7 +30,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Map" component={MapScreen} />
       <Stack.Screen name="Notification" component={NotificationScreen} />
       <Stack.Screen name="AlarmScreen" component={AlarmScreen} />
-      <Stack.Screen name='EditProfileScreen' component={EditProfileScreen} /> 
+      <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
     </Stack.Navigator>
   );
 };
