@@ -7,22 +7,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center', // Centraliza o conteúdo horizontalmente
   },
-<<<<<<< HEAD
-  uploadButton: {
-    backgroundColor: '#60A2AE', // Cor verde
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 15,
-  },
-  uploadButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-=======
- 
->>>>>>> 74b946e (refactor: update styles and reorganize folder structure)
   header: {
     width: '100%',
     height: 57,
