@@ -19,7 +19,7 @@ const HomeScreen = ({ navigation, route }) => {
   const fetchMedications = async () => {
     const apiIp = await AsyncStorage.getItem('apiIp');
     try {
-      const response = await fetch('http://' + apiIp + ':8080/medicamento/list', {
+      const response = await fetch('https://' + apiIp + '/medicamento/list', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

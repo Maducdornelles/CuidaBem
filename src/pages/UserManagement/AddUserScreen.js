@@ -88,7 +88,7 @@ const AddUserScreen = ({ navigation }) => {
   
     try {
       const token = await AsyncStorage.getItem('token'); // Recupera o token do armazenamento
-      const response = await fetch('http://'+ apiIp +':8080/profiles/create', {
+      const response = await fetch('https://'+ apiIp +'/profiles/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

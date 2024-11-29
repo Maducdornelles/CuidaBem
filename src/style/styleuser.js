@@ -2,11 +2,13 @@ import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1,  // O conteúdo vai ocupar o restante do espaço
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     paddingTop: 30,
+    justifyContent: 'flex-start', // O conteúdo vai se alinhar no topo
   },
+  
   header: {
     width: '100%',
     height: 57,
@@ -19,6 +21,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    marginTop :-30,
   },
   headerText: {
     fontSize: 16,
@@ -101,29 +104,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
-    marginVertical: 10,
-    marginBottom: 10, // Distância de 10px entre os botões
+    marginVertical: 20,  // Ajusta o espaçamento vertical entre o conteúdo e o botão
+    marginTop: 20, // Ajuste a margem superior para evitar que o botão suba demais
+    position: 'absolute', // Faz o botão ficar fixo na parte inferior
+    bottom: 90, // Distância do botão do fundo da tela
   },
+  
+  
   addButtonText: {
     color: '#FFFFFF',
     fontSize: 18,
   },
-  editProfileButton: {
-    width: 200, // Mesmo tamanho para consistência
-    height: 57, // Mesmo tamanho para consistência
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#62A4B0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-    marginVertical: 10,
-    marginBottom: 100,
-  },
-  editProfileButtonText: {
-    color: '#62A4B0',
-    fontSize: 18,
-  },
+ 
 });
 
 export default styles;

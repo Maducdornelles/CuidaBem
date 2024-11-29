@@ -6,6 +6,7 @@ import styles from '../../style/styleuser';
 import FooterNavigation from '../../components/FooterNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import { AntDesign } from 'react-native-vector-icons';
 
 const UserScreen = ({ route }) => {
   const navigation = useNavigation();
@@ -18,14 +19,14 @@ const UserScreen = ({ route }) => {
       const fetchProfiles = async () => {
         const apiIp = await AsyncStorage.getItem('apiIp');
         try {
-          const response = await fetch('http://' + apiIp + ':8080/profiles/select', {
+          const response = await fetch('https://' + apiIp + '/profiles/select', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
             },
           });
-  
+
           if (response.ok) {
             const data = await response.json();
             const enrichedProfiles = data.map((profile) => ({
@@ -43,16 +44,39 @@ const UserScreen = ({ route }) => {
           Alert.alert('Erro', 'Não foi possível carregar os perfis.');
         }
       };
-  
+
       fetchProfiles();
     }, [token])
   );
-  
+
+  // Função para excluir o perfil
+  const handleDeleteProfile = async (profileId) => {
+    try {
+      const apiIp = await AsyncStorage.getItem('apiIp');
+      const response = await fetch('https://' + apiIp + '/profiles/delete/' + profileId, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setProfiles(profiles.filter(profile => profile.id !== profileId)); // Remove o perfil da lista
+        Alert.alert('Sucesso', 'Perfil excluído com sucesso!');
+      } else {
+        const errorMessage = await response.text();
+        Alert.alert('Erro', `Erro ao excluir o perfil: ${errorMessage}`);
+      }
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível excluir o perfil.');
+    }
+  };
 
   const selectProfile = async (profileId) => {
     const apiIp = await AsyncStorage.getItem('apiIp');
     try {
-      const response = await fetch('http://' + apiIp + ':8080/profiles/select/' + (profileId.toString()), {
+      const response = await fetch('https://' + apiIp + '/profiles/select/' + (profileId.toString()), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,9 +104,7 @@ const UserScreen = ({ route }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-     
-        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()} />
         <Text style={styles.headerText}>Perfil</Text>
       </View>
 
@@ -110,6 +132,13 @@ const UserScreen = ({ route }) => {
                   ))}
                 </View>
               </TouchableOpacity>
+              {/* Ícone de lixeira para excluir o perfil */}
+              <TouchableOpacity
+                style={styles.deleteIcon}
+                onPress={() => handleDeleteProfile(profile.id)}
+              >
+                <AntDesign name="delete" size={24} color="#60A2AE" />
+              </TouchableOpacity>
             </Card>
           </View>
         ))}
@@ -120,14 +149,6 @@ const UserScreen = ({ route }) => {
         onPress={() => navigation.navigate('AddUser')}
       >
         <Text style={styles.addButtonText}>Adicionar perfil</Text>
-      </TouchableOpacity>
-
-      {/* Botão para editar perfil */}
-      <TouchableOpacity
-        style={styles.editProfileButton}
-        onPress={() => navigation.navigate('EditProfileScreen', { token })}
-      >
-        <Text style={styles.editProfileButtonText}>Editar perfil</Text>
       </TouchableOpacity>
 
       <FooterNavigation />

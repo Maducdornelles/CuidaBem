@@ -1,49 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Modal, TouchableOpacity, Switch, TouchableWithoutFeedback, Alert } from 'react-native';
-import * as Notifications from 'expo-notifications';
-import { useFocusEffect } from '@react-navigation/native'; 
+import { View, Text, Modal, TouchableOpacity, TouchableWithoutFeedback, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, route }) => {
-  const [isAlarmEnabled, setIsAlarmEnabled] = useState(false);
-  const [alarms, setAlarms] = useState([]);
   const [medicationDetails, setMedicationDetails] = useState(null);
   const [token, setToken] = useState(null);
   const [profileId, setProfileId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const getTokenAndProfileId = async () => {
-        try {
-          const storedToken = await AsyncStorage.getItem('token');
-          const storedProfileId = await AsyncStorage.getItem('profileId');
-          if (storedToken && storedProfileId) {
-            setToken(storedToken);
-            setProfileId(storedProfileId);
-          }
-        } catch (error) {
-          console.error('Erro ao buscar dados do AsyncStorage:', error);
+  useEffect(() => {
+    const getTokenAndProfileId = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem('token');
+        const storedProfileId = await AsyncStorage.getItem('profileId');
+        if (storedToken && storedProfileId) {
+          setToken(storedToken);
+          setProfileId(storedProfileId);
         }
-      };
-
-      // Verifica parâmetros da navegação
-      if (route?.params) {
-        const { token: navToken, profileId: navProfileId } = route.params;
-        setToken(navToken);
-        setProfileId(navProfileId);
-      } else {
-        // Caso não haja parâmetros, busca do AsyncStorage
-        getTokenAndProfileId();
+      } catch (error) {
+        console.error('Erro ao buscar dados do AsyncStorage:', error);
       }
-    }, [route?.params])
-  );
+    };
+
+    // Verifica parâmetros da navegação
+    if (route?.params) {
+      const { token: navToken, profileId: navProfileId } = route.params;
+      setToken(navToken);
+      setProfileId(navProfileId);
+    } else {
+      // Caso não haja parâmetros, busca do AsyncStorage
+      getTokenAndProfileId();
+    }
+  }, [route?.params]);
 
   const fetchMedicationDetails = async (medId) => {
     setIsLoading(true); // Inicia o carregamento
+    const apiIp = await AsyncStorage.getItem('apiIp');
     try {
-      const response = await fetch(`http://10.1.241.222:8080/medicamento/getbyid/${medId}`, {
+      const response = await fetch('https://'+ apiIp +`/medicamento/getbyid/${medId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +45,7 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
           'Active-Profile': profileId,
         },
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         setMedicationDetails(data);
@@ -63,43 +57,17 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
       setIsLoading(false); // Finaliza o carregamento
     }
   };
-  
-  
 
   useEffect(() => {
     if (visible && medication?.id && token && profileId) {
       fetchMedicationDetails(medication.id);
     }
   }, [visible, medication, token, profileId]);
-  
-  
-  const toggleAlarm = async (enabled) => {
-    setIsAlarmEnabled(enabled);
-    if (enabled) {
-      try {
-        const scheduledAlarms = await scheduleAlarms(new Date(), 6, medication.name);
-        setAlarms(scheduledAlarms);
-        Alert.alert('Alarme Ativado', 'O alarme foi configurado com sucesso!');
-      } catch (error) {
-        console.error('Erro ao agendar alarme:', error);
-        Alert.alert('Erro', 'Não foi possível configurar o alarme.');
-        setIsAlarmEnabled(false);
-      }
-    } else {
-      try {
-        await Notifications.cancelAllScheduledNotificationsAsync();
-        setAlarms([]);
-        Alert.alert('Alarme Desativado', 'Os alarmes foram cancelados com sucesso.');
-      } catch (error) {
-        console.error('Erro ao cancelar alarmes:', error);
-        Alert.alert('Erro', 'Não foi possível cancelar os alarmes.');
-      }
-    }
-  };
 
   const deleteMedication = async (medId) => {
+    const apiIp = await AsyncStorage.getItem('apiIp');
     try {
-      const response = await fetch(`http://10.1.241.222:8080/medicamento/deletebyid/${medId}`, {
+      const response = await fetch('https://'+ apiIp +`/medicamento/deletebyid/${medId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -107,11 +75,11 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
           'Active-Profile': profileId,
         },
       });
-  
+
       if (response.ok) {
+        navigation.navigate('Home', { refresh: true });
         Alert.alert('Sucesso', 'Medicamento excluído com sucesso.');
-        onClose(); // Fecha o modal
-        navigation.navigate('Home', { refresh: true }); // Atualiza a Home
+        onClose();
       } else {
         Alert.alert('Erro', 'Não foi possível excluir o medicamento.');
       }
@@ -120,8 +88,6 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
       Alert.alert('Erro', 'Não foi possível excluir o medicamento.');
     }
   };
-  
-  
 
   return (
     <Modal
@@ -134,7 +100,8 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
         <View style={styles.modalContainer}>
           <TouchableWithoutFeedback>
             <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>{medication?.name}</Text>
+              <Text style={styles.modalTitle}>Detalhes</Text>
+              <Text style={styles.modalMedicationName}>{medication?.name}</Text>
               <Text style={styles.modalDescription}>{medication?.description}</Text>
 
               {isLoading ? (
@@ -157,27 +124,7 @@ const ModalComponent = ({ visible, medication, onClose, navigation, onDelete, ro
                 )
               )}
 
-
-              <View style={styles.switchContainer}>
-                <Text style={styles.switchLabel}>Habilitar Alarme</Text>
-                <Switch
-                  value={isAlarmEnabled}
-                  onValueChange={toggleAlarm}
-                  thumbColor={isAlarmEnabled ? '#00d8c1' : '#f4f3f4'}
-                  trackColor={{ false: '#767577', true: '#b8f2ee' }}
-                />
-              </View>
-
               <View style={styles.centerContent}>
-                <Text style={styles.modalSchedule}>Horários por dia:</Text>
-                {alarms.length > 0 ? (
-                  alarms.map((time, index) => (
-                    <Text key={index} style={styles.modalSchedule}>{time}</Text>
-                  ))
-                ) : (
-                  <Text style={styles.modalSchedule}>Nenhum alarme configurado</Text>
-                )}
-
                 <TouchableOpacity
                   style={styles.secondaryButton}
                   onPress={() =>
@@ -225,12 +172,22 @@ const styles = {
     fontWeight: 'bold',
     color: '#000',
     marginBottom: 10,
+    textAlign: 'center',  // Centraliza o título
+  },
+  modalMedicationName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    textAlign: 'center', // Nome do medicamento centralizado
+    marginBottom: 5,
   },
   modalDescription: {
     fontSize: 14,
     color: '#000',
     marginBottom: 15,
     fontWeight: 'bold',
+    textAlign: 'center', // Descrição centralizada
+    marginTop: -50, // Movimenta a descrição um pouco para cima
   },
   modalDetails: {
     fontSize: 14,
@@ -242,39 +199,9 @@ const styles = {
     fontWeight: 'bold',
     color: '#C25B8C',
   },
-  switchContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  switchLabel: {
-    fontSize: 16,
-    color: '#666',
-  },
   centerContent: {
     alignItems: 'center',
     marginBottom: 10,
-  },
-  modalSchedule: {
-    fontSize: 14,
-    color: '#000',
-    marginBottom: 5,
-  },
-  primaryButton: {
-    width: 187,
-    height: 45,
-    backgroundColor: '#62A4B0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-    marginBottom: 10,
-    marginTop: 20,
-  },
-  primaryButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   secondaryButton: {
     width: 187,
@@ -285,6 +212,7 @@ const styles = {
     alignItems: 'center',
     borderRadius: 10,
     marginBottom: 10,
+    marginTop: 20,
   },
   secondaryButtonText: {
     color: '#62A4B0',

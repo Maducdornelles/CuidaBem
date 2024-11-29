@@ -38,7 +38,7 @@ const SignUpScreen = ({ navigation }) => {
         name: name,
       };
   
-      const response = await fetch('http://'+ apiIp +':8080/auth/register', {
+      const response = await fetch('https://'+ apiIp +'/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

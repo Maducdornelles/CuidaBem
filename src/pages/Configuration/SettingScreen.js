@@ -28,6 +28,7 @@ const SettingScreen = ({ navigation, route }) => {
       </TouchableOpacity>
 
      
+
       <View style={styleSettings.bottomBar} />
     </View>
   );

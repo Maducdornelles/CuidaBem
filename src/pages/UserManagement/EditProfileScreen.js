@@ -37,7 +37,8 @@ const EditProfileScreen = ({ route }) => {
     try {
       // Obtém o token e profileId do AsyncStorage
       const token = await AsyncStorage.getItem('token');
-      const profileId = await AsyncStorage.getItem('profileId').toString();
+      const profileId = await AsyncStorage.getItem('profileId');
+      const apiIp = await AsyncStorage.getItem('apiIp');
   
       if (!token || !profileId) {
         Alert.alert('Erro', 'Não foi possível localizar as informações do perfil ou autenticação.');
@@ -53,7 +54,8 @@ const EditProfileScreen = ({ route }) => {
             text: 'Sim',
             onPress: async () => {
               try {
-                const response = await fetch('http://' + apiIp + ':8080/profiles/delete/' + profileId, {
+                console.log('https://' + apiIp + '/profiles/delete/' + profileId)
+                const response = await fetch('https://' + apiIp + '/profiles/delete/' + profileId, {
                   method: 'DELETE',
                   headers: {
                     'Content-Type': 'application/json',
