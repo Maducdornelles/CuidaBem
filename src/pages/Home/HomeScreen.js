@@ -94,7 +94,7 @@ const HomeScreen = ({ navigation, route }) => {
             }}>
               <View style={stylehome.cardContent}>
                 <Image
-                  source={require('../../../assets/icons/Capsula.png')}
+                  source={require('../../../assets/icons/capsula.png')}
                   style={stylehome.cardImage}
                 />
                 <View style={stylehome.cardTextContainer}>

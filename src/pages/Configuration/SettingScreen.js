@@ -27,14 +27,7 @@ const SettingScreen = ({ navigation, route }) => {
         <Text style={styleSettings.buttonText}>Usuário</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={styleSettings.button}
-        onPress={() => navigation.navigate('Notification')}
-      >
-        <Feather name="bell" size={35} color="white" /> 
-        <Text style={styleSettings.buttonText}>Notificação</Text>
-      </TouchableOpacity>
-
+     
       <View style={styleSettings.bottomBar} />
     </View>
   );
